@@ -6,7 +6,16 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 
 import { AuthModule } from './modules/auth/auth.module';
-import { TenantsModule } from './modules/tenants/tenants.module';
+import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
+import { ImportModule } from './modules/import/import.module';
+import { ReportsModule } from './modules/reports/reports.module';
+import { GradingModule } from './modules/grading/grading.module';
+import { AssessmentsModule } from './modules/assessments/assessments.module';
+import { SubjectsModule } from './modules/subjects/subjects.module';
+import { StudentsModule } from './modules/students/students.module';
+import { SchoolsModule } from './modules/schools/schools.module';
+import { UsersModule } from './modules/users/users.module';
+import {TenantsModule} from '@marka/modules/tenants';
 import { UsersModule } from './modules/users/users.module';
 import { SchoolsModule } from './modules/schools/schools.module';
 import { StudentsModule } from './modules/students/students.module';
@@ -19,18 +28,28 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AuditModule } from './modules/audit/audit.module';
 
-import databaseConfig from '@marka/config';
-import appConfig from './config/app.config';
-import jwtConfig from './config/jwt.config';
-import paystackConfig from './config/paystack.config';
-import storageConfig from './config/storage.config';
+import {
+  appConfig,
+  databaseConfig,
+  jwtConfig,
+  paystackConfig,
+  storageConfig,
+} from '@marka/config';
+import { AuthModule } from './modules/auth/auth.module';
+
 
 @Module({
   imports: [
     // Configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, appConfig, jwtConfig, paystackConfig, storageConfig],
+      load: [
+        databaseConfig,
+        appConfig,
+        jwtConfig,
+        paystackConfig,
+        storageConfig,
+      ],
       envFilePath: ['.env'],
     }),
 
@@ -92,6 +111,7 @@ import storageConfig from './config/storage.config';
     SubscriptionsModule,
     NotificationsModule,
     AuditModule,
+    AssessmentsModule,
   ],
   controllers: [],
   providers: [],

@@ -20,13 +20,12 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@marka/*": ["./src/*"],
+      "@marka/modules/*": ["./src/modules/*"]
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
-  "paths": {
-    "@marka/common/*": ["src/common/*"],
-    "@marka/modules/*": ["src/modules/*"],
-    "@marka/config/*": ["src/config/*"]
-  }"
 }

@@ -1,5 +1,7 @@
-export * from './app.config';
-export * from './database.config';
-export * from './jwt.config';
-export * from './paystack.config';
-export * from './storage.config';
+import appConfig from './app.config';
+import databaseConfig from './database.config';
+import jwtConfig from './jwt.config';
+import storageConfig from './storage.config';
+import paystackConfig from './paystack.config';
+
+export { appConfig, databaseConfig, jwtConfig, storageConfig, paystackConfig };
