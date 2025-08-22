@@ -10,9 +10,9 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Tenant } from '@marka/modules/tenants';
-import { School } from '@marka/modules';
-import { Assessment } from '../assessments/assessment.entity';
-import { Report } from '../reports/report.entity';
+import { School } from '@marka/modules/schools';
+import { Assessment } from '@marka/modules/assessments';
+import { Report } from '@marka/modules/reports';
 
 export enum Gender {
   MALE = 'male',

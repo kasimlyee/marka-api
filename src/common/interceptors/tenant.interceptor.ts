@@ -5,8 +5,7 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { TenantService } from '../../modules/tenants/tenant.service';
-import { Tenant } from '../../modules/tenants/tenant.entity';
+import { TenantService, Tenant } from '@marka/modules/tenants';
 
 @Injectable()
 export class TenantInterceptor implements NestInterceptor {
@@ -24,9 +23,8 @@ export class TenantInterceptor implements NestInterceptor {
 
     if (tenantIdentifier) {
       // Resolve tenant
-      const tenant: Tenant = await this.tenantService.findByIdentifier(
-        tenantIdentifier,
-      );
+      const tenant: Tenant =
+        await this.tenantService.findByIdentifier(tenantIdentifier);
 
       if (tenant) {
         // Set tenant on request for later use

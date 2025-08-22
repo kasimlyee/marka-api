@@ -2,11 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { TenantInterceptor } from './common/interceptors/tenant.interceptor';
-import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
-import { RateLimitInterceptor } from './common/interceptors/rate-limit.interceptor';
+import {
+  AllExceptionsFilter,
+  HttpExceptionFilter,
+  TenantInterceptor,
+  TimeoutInterceptor,
+  RateLimitInterceptor,
+} from '@marka/common';
+import { TenantService } from '@marka/modules/tenants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,7 +31,7 @@ async function bootstrap() {
 
   // Global interceptors
   app.useGlobalInterceptors(
-    new TenantInterceptor(),
+    app.get(TenantInterceptor),
     new TimeoutInterceptor(),
     new RateLimitInterceptor(),
   );

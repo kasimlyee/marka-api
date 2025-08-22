@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, MinLength, IsEnum } from 'class-validator';
-import { Role } from '../../users/user.entity';
+import { Role } from '@marka/modules/users';
 
 export class RegisterDto {
   @ApiProperty({ description: 'User email' })

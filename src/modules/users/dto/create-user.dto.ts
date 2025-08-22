@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength, IsEnum, IsOptional, IsPhoneNumber } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  MinLength,
+  IsEnum,
+  IsOptional,
+  IsPhoneNumber,
+} from 'class-validator';
 import { Role } from '../user.entity';
 
 export class CreateUserDto {
@@ -32,4 +39,9 @@ export class CreateUserDto {
   })
   @IsEnum(Role)
   role: Role;
+
+  @ApiProperty({ description: 'Refresh token' })
+  @IsString()
+  @IsOptional()
+  refreshTokenHash?: string;
 }

@@ -10,7 +10,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Tenant } from '@marka/modules/tenants';
-import { Assessment } from '../assessments/assessment.entity';
+import { Assessment } from '@marka/modules/assessments';
 
 export enum SubjectType {
   CORE = 'core',

@@ -1,21 +1,22 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UsersService } from '../users/users.service';
 import { TenantService } from '@marka/modules/tenants';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { User } from '../users/user.entity';
-import { Role } from '../users/user.entity';
+import { User, Role, UsersService } from '@marka/modules/users';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly tenantService: TenantService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -36,7 +37,10 @@ export class AuthService {
     return user;
   }
 
-  async login(loginDto: LoginDto, tenantId?: string): Promise<{
+  async login(
+    loginDto: LoginDto,
+    tenantId?: string,
+  ): Promise<{
     accessToken: string;
     refreshToken: string;
     user: User;
@@ -153,6 +157,6 @@ export class AuthService {
 
   async logout(userId: string): Promise<void> {
     // Clear refresh token hash
-    await this.usersService.update(userId, { refreshTokenHash: null });
+    await this.usersService.update(userId, { refreshTokenHash: undefined });
   }
 }

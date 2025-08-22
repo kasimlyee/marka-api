@@ -40,10 +40,7 @@ export class UsersController {
     @Body() createUserDto: CreateUserDto,
     @Tenant() tenant,
   ): Promise<User> {
-    return this.usersService.create({
-      ...createUserDto,
-      tenantId: tenant.id,
-    });
+    return this.usersService.create(createUserDto, tenant.id);
   }
 
   @Get()

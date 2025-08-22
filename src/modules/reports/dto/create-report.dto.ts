@@ -45,4 +45,8 @@ export class CreateReportDto {
   @ApiProperty({ description: 'Head teacher', required: false })
   @IsString()
   headTeacher?: string;
+
+  @ApiProperty({ description: 'Reports status', required: false })
+  @IsString()
+  status?: string;
 }

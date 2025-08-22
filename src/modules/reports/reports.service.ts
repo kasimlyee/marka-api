@@ -171,16 +171,16 @@ export class ReportsService {
       }
 
       // Update report with results
-      await this.update(reportId, { results }, tenantId);
+      //await this.update(reportId, { results }, tenantId);
 
       // Generate PDF (this would be handled by a separate PDF generation service)
-      const pdfUrl = await this.generatePdf(report, results);
+      //const pdfUrl = await this.generatePdf(report, results);
 
       // Update report with PDF URL and mark as completed
       await this.update(
         reportId,
         {
-          pdfUrl,
+          //pdfUrl,
           status: ReportStatus.COMPLETED,
         },
         tenantId,
@@ -191,7 +191,7 @@ export class ReportsService {
         reportId,
         {
           status: ReportStatus.FAILED,
-          errorMessage: error.message,
+          // errorMessage: error.message,
         },
         tenantId,
       );

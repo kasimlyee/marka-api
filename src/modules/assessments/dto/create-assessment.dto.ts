@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEnum, IsNumber, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
 import { AssessmentType, ExamLevel } from '../assessment.entity';
 
 export class CreateAssessmentDto {
@@ -30,6 +36,7 @@ export class CreateAssessmentDto {
   @IsOptional()
   @IsNumber()
   examScore?: number;
+
 
   @ApiProperty({ description: 'Student ID' })
   @IsUUID()

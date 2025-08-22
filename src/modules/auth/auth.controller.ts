@@ -20,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Tenant } from '@marka/common';
+import { Tenant as TenantEntity } from '@marka/modules/tenants';
 import { User } from '@marka/modules/users';
 
 @ApiTags('auth')
@@ -30,7 +31,7 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({ status: 200, description: 'Login successful' })
-  async login(@Body() loginDto: LoginDto, @Tenant() tenant?: Tenant) {
+  async login(@Body() loginDto: LoginDto, @Tenant() tenant?: TenantEntity) {
     return this.authService.login(loginDto, tenant?.id);
   }
 

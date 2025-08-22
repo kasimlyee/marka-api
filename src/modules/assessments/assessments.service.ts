@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Assessment } from './assessment.entity';
 import { CreateAssessmentDto } from './dto/create-assessment.dto';
 import { UpdateAssessmentDto } from './dto/update-assessment.dto';
-import { GradingService } from '../grading/grading.service';
+import { GradingService } from '@marka/modules/grading';
 import { Grade, ExamLevel } from './assessment.entity';
 
 @Injectable()
@@ -20,17 +20,17 @@ export class AssessmentsService {
     tenantId: string,
   ): Promise<Assessment> {
     // Calculate total score if both scores are provided
-    let totalScore = null;
+    let totalScore: number | null = null;
     if (
-      createAssessmentDto.caScore !== null &&
-      createAssessmentDto.examScore !== null
+      createAssessmentDto.caScore != null &&
+      createAssessmentDto.examScore != null
     ) {
       totalScore = createAssessmentDto.caScore + createAssessmentDto.examScore;
     }
 
     // Calculate grade and points based on exam level
-    let grade = null;
-    let points = null;
+    let grade: string | null = null;
+    let points: number | null = null;
     if (totalScore !== null) {
       const gradingResult = this.gradingService.calculateGrade(
         totalScore,

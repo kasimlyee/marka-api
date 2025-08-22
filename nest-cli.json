@@ -4,5 +4,153 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true
+  },
+  "monorepo": true,
+  "root": ".",
+  "projects": {
+    "common": {
+      "type": "library",
+      "root": "src/common",
+      "entryFile": "index",
+      "sourceRoot": "src/common",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "config": {
+      "type": "library",
+      "root": "src/config",
+      "entryFile": "index",
+      "sourceRoot": "src/config",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "tenants": {
+      "type": "library",
+      "root": "src/modules/tenants",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/tenants",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "users": {
+      "type": "library",
+      "root": "src/modules/users",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/users",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "auth": {
+      "type": "library",
+      "root": "src/modules/auth",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/auth",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "schools": {
+      "type": "library",
+      "root": "src/modules/schools",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/schools",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "students": {
+      "type": "library",
+      "root": "src/modules/students",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/students",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "subjects": {
+      "type": "library",
+      "root": "src/modules/subjects",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/subjects",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "assessments": {
+      "type": "library",
+      "root": "src/modules/assessments",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/assessments",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "grading": {
+      "type": "library",
+      "root": "src/modules/grading",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/grading",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "reports": {
+      "type": "library",
+      "root": "src/modules/reports",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/reports",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "import": {
+      "type": "library",
+      "root": "src/modules/import",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/import",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "subscriptions": {
+      "type": "library",
+      "root": "src/modules/subscriptions",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/subscriptions",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "payments": {
+      "type": "library",
+      "root": "src/modules/payments",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/payments",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "notifications": {
+      "type": "library",
+      "root": "src/modules/notifications",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/notifications",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    },
+    "audit": {
+      "type": "library",
+      "root": "src/modules/audit",
+      "entryFile": "index",
+      "sourceRoot": "src/modules/audit",
+      "compilerOptions": {
+        "tsConfigPath": "tsconfig.json"
+      }
+    }
   }
 }

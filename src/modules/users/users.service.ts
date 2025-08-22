@@ -18,7 +18,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto, tenantId?: string): Promise<User> {
     // Check if user already exists
     const existingUser = await this.findByEmail(createUserDto.email);
     if (existingUser) {
@@ -32,6 +32,7 @@ export class UsersService {
     const user = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
+      tenantId,
     });
 
     return this.userRepository.save(user);
@@ -40,7 +41,15 @@ export class UsersService {
   async findAll(tenantId: string): Promise<User[]> {
     return this.userRepository.find({
       where: { tenantId },
-      select: ['id', 'email', 'firstName', 'lastName', 'phone', 'role', 'isActive'],
+      select: [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'phone',
+        'role',
+        'isActive',
+      ],
     });
   }
 
