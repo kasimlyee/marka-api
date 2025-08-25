@@ -10,7 +10,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Tenant } from '@marka/modules/tenants';
-import { School } from '@marka/modules/schools';
+import { School } from '@marka/modules/schools/school.entity';
 import { Assessment } from '@marka/modules/assessments';
 import { Report } from '@marka/modules/reports';
 
