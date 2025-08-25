@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEnum, IsOptional, IsEmail, IsPhoneNumber } from 'class-validator';
-import { TenantPlan } from '../tenant.entity';
+import {
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsEmail,
+  IsPhoneNumber,
+} from 'class-validator';
+import { TenantPlan } from '@marka/common';
 
 export class CreateTenantDto {
   @ApiProperty({ description: 'Name of the tenant/school' })

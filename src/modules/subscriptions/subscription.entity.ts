@@ -7,8 +7,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Tenant, TenantPlan } from '@marka/modules/tenants';
-
+import { Tenant } from '@marka/modules/tenants';
+import { TenantPlan } from '@marka/common';
 
 export enum SubscriptionStatus {
   ACTIVE = 'active',

@@ -4,8 +4,9 @@ import { Repository, DataSource } from 'typeorm';
 import { Tenant } from './tenant.entity';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
-import { TenantPlan, IsolationMode } from './tenant.entity';
+import { IsolationMode } from './tenant.entity';
 import * as crypto from 'crypto';
+import { TenantPlan } from '@marka/common';
 
 @Injectable()
 export class TenantService {
@@ -34,9 +35,7 @@ export class TenantService {
 
     // If schema isolation, create the schema
     if (isolationMode === IsolationMode.SCHEMA) {
-      const schemaName = `tenant_${crypto
-        .randomBytes(8)
-        .toString('hex')}`;
+      const schemaName = `tenant_${crypto.randomBytes(8).toString('hex')}`;
       tenant.schemaName = schemaName;
       await this.createTenantSchema(schemaName);
     }
@@ -67,7 +66,9 @@ export class TenantService {
     });
 
     if (!tenant) {
-      throw new NotFoundException(`Tenant with identifier ${identifier} not found`);
+      throw new NotFoundException(
+        `Tenant with identifier ${identifier} not found`,
+      );
     }
 
     return tenant;
@@ -115,7 +116,9 @@ export class TenantService {
   private async dropTenantSchema(schemaName: string): Promise<void> {
     try {
       // Drop the schema
-      await this.dataSource.query(`DROP SCHEMA IF EXISTS ${schemaName} CASCADE`);
+      await this.dataSource.query(
+        `DROP SCHEMA IF EXISTS ${schemaName} CASCADE`,
+      );
       console.log(`Dropped schema: ${schemaName}`);
     } catch (error) {
       console.error(`Error dropping schema ${schemaName}:`, error);

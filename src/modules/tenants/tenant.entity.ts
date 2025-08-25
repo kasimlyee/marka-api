@@ -10,12 +10,7 @@ import {
 import { User } from '../users/user.entity';
 import { School } from '../schools/school.entity';
 import { Subscription } from '../subscriptions/subscription.entity';
-
-export enum TenantPlan {
-  STANDARD = 'standard',
-  PRO = 'pro',
-  ENTERPRISE = 'enterprise',
-}
+import { TenantPlan } from '@marka/common';
 
 export enum IsolationMode {
   RLS = 'rls', // Row Level Security

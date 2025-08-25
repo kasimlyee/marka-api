@@ -7,7 +7,7 @@ import {
   IsEnum,
 } from 'class-validator';
 import { BillingCycle, SubscriptionStatus } from '../subscription.entity';
-import { TenantPlan } from '@marka/modules/tenants';
+import { TenantPlan } from '@marka/common';
 
 export class CreateSubscriptionDto {
   @ApiProperty({ enum: TenantPlan, enumName: 'SubscriptionPlan' })

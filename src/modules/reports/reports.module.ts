@@ -6,10 +6,10 @@ import { ReportsController } from './reports.controller';
 import { Report } from './report.entity';
 import { ReportTemplate } from './report-template.entity';
 import { ReportsProcessor } from './reports.processor';
-import { StudentsModule } from '@marka/modules/students';
-import { AssessmentsModule } from '@marka/modules/assessments';
-import { GradingModule } from '@marka/modules/grading';
-import { TenantsModule } from '@marka/modules/tenants';
+//import { StudentsModule } from '../students/students.module';
+import { AssessmentsModule } from '../assessments/assessments.module';
+import { GradingModule } from '../grading/grading.module';
+import { TenantsModule } from '../tenants/tenants.module';
 
 @Module({
   imports: [
@@ -17,7 +17,6 @@ import { TenantsModule } from '@marka/modules/tenants';
     BullModule.registerQueue({
       name: 'report-generation',
     }),
-    StudentsModule,
     AssessmentsModule,
     GradingModule,
     TenantsModule,

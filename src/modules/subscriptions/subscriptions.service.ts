@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import { TenantService, TenantPlan } from '@marka/modules/tenants';
+import { TenantService } from '@marka/modules/tenants';
 import { PaymentService } from '@marka/modules/payments';
 import {
   SubscriptionStatus,
@@ -16,6 +16,7 @@ import {
 } from './subscription.entity';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
+import { TenantPlan } from '@marka/common';
 
 @Injectable()
 export class SubscriptionsService {
