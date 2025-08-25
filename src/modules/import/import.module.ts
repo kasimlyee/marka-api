@@ -6,9 +6,9 @@ import { ImportService } from './import.service';
 import { ImportController } from './import.controller';
 import { ImportProcessor } from './import.processor';
 import { ImportJob } from './import-job.entity';
-import { StudentsModule } from '@marka/modules/students';
-import { SubjectsModule } from '@marka/modules/subjects';
-import { AssessmentsModule } from '@marka/modules/assessments';
+import { StudentsModule } from '../students/students.module';
+import { SubjectsModule } from '../subjects/subjects.module';
+import { AssessmentsModule } from '../assessments/assessments.module';
 
 @Module({
   imports: [
