@@ -1,5 +1,6 @@
-import { SchoolsModule } from './schools.module';
-import { SchoolsService } from './schools.service';
-import { School, SchoolLevel } from './school.entity';
 
-export { SchoolsModule, SchoolsService, School, SchoolLevel };
+export { SchoolsModule } from './schools.module';
+export { SchoolsService } from './schools.service';
+export { School } from './school.entity';
+export * from './dto/create-school.dto';
+export * from './dto/update-school.dto';
