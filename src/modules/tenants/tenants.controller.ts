@@ -21,7 +21,7 @@ import {
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Role } from '@marka/common';
+import { Role } from '../../common/enums/role.enum';
 
 @ApiTags('tenants')
 @Controller('tenants')

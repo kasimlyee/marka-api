@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Assessment } from './assessment.entity';
 import { CreateAssessmentDto } from './dto/create-assessment.dto';
 import { UpdateAssessmentDto } from './dto/update-assessment.dto';
-import { GradingService } from '@marka/modules/grading';
+import { GradingService } from '../grading/grading.service';
 import { Grade, ExamLevel } from './assessment.entity';
 
 @Injectable()

@@ -6,7 +6,7 @@ import {
   IsEmail,
   IsPhoneNumber,
 } from 'class-validator';
-import { TenantPlan } from '@marka/common';
+import { TenantPlan } from '../../../common/enums/tenant-plan.enum';
 
 export class CreateTenantDto {
   @ApiProperty({ description: 'Name of the tenant/school' })
