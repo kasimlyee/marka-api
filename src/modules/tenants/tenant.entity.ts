@@ -7,9 +7,6 @@ import {
   Index,
   OneToMany,
 } from 'typeorm';
-import { User } from '../users/user.entity';
-import { School } from '../schools/school.entity';
-import { Subscription } from '../subscriptions/subscription.entity';
 import { TenantPlan } from '@marka/common';
 
 export enum IsolationMode {
@@ -78,12 +75,12 @@ export class Tenant {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => User, (user) => user.tenant)
-  users: User[];
+  @OneToMany('User', 'tenant')
+  users: any[];
 
-  @OneToMany(() => School, (school) => school.tenant)
-  schools: School[];
+  @OneToMany('School', 'tenant')
+  schools: any[];
 
-  @OneToMany(() => Subscription, (subscription) => subscription.tenant)
-  subscriptions: Subscription[];
+  @OneToMany('Subscription', 'tenant')
+  subscriptions: any[];
 }
