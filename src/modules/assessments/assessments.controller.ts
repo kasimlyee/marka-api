@@ -38,8 +38,9 @@ export class AssessmentsController {
   async create(
     @Body() createAssessmentDto: CreateAssessmentDto,
     @Tenant() tenant,
-  ): Promise<Assessment> {
-    return this.assessmentsService.create(createAssessmentDto, tenant.id);
+  ): Promise<Assessment | null> {
+    //return this.assessmentsService.create(createAssessmentDto, tenant.id);
+    return null;
   }
 
   @Get()

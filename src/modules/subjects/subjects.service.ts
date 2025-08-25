@@ -314,12 +314,12 @@ export class SubjectsService {
     const allSubjects = [...pleSubjects, ...uceSubjects, ...uaceSubjects];
 
     // Create subjects
-    for (const subjectData of allSubjects) {
+    /** for (const subjectData of allSubjects) {
       const subject = this.subjectRepository.create({
         ...subjectData,
         tenantId,
       });
       await this.subjectRepository.save(subject);
-    }
+    }*/
   }
 }

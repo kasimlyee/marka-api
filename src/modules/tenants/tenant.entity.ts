@@ -15,7 +15,6 @@ export enum TenantPlan {
   STANDARD = 'standard',
   PRO = 'pro',
   ENTERPRISE = 'enterprise',
-  LIFETIME = 'lifetime',
 }
 
 export enum IsolationMode {

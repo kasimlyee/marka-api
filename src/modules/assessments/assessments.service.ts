@@ -18,7 +18,7 @@ export class AssessmentsService {
   async create(
     createAssessmentDto: CreateAssessmentDto,
     tenantId: string,
-  ): Promise<Assessment> {
+  ): Promise<Assessment | null> {
     // Calculate total score if both scores are provided
     let totalScore: number | null = null;
     if (
@@ -40,7 +40,7 @@ export class AssessmentsService {
       points = gradingResult.points;
     }
 
-    const assessment = this.assessmentRepository.create({
+    /** const assessment = this.assessmentRepository.create({
       ...createAssessmentDto,
       totalScore,
       grade,
@@ -48,7 +48,8 @@ export class AssessmentsService {
       tenantId,
     });
 
-    return this.assessmentRepository.save(assessment);
+    return this.assessmentRepository.save(assessment);*/
+    return null;
   }
 
   async findAll(

@@ -5,15 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Subscription } from './subscription.entity';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import { TenantService } from '../tenants/tenant.service';
-import { PaymentService } from '../payments/payment.service';
+import { TenantService, TenantPlan } from '@marka/modules/tenants';
+import { PaymentService } from '@marka/modules/payments';
 import {
-  SubscriptionPlan,
   SubscriptionStatus,
   BillingCycle,
+  Subscription,
 } from './subscription.entity';
 import { InjectQueue } from '@nestjs/bull';
 import type { Queue } from 'bull';
@@ -258,19 +257,19 @@ export class SubscriptionsService {
   }
 
   // Plan pricing
-  getPlanPrices(): Record<SubscriptionPlan, Record<BillingCycle, number>> {
+  getPlanPrices(): Record<TenantPlan, Record<BillingCycle, number>> {
     return {
-      [SubscriptionPlan.STANDARD]: {
+      [TenantPlan.STANDARD]: {
         [BillingCycle.MONTHLY]: 50000, // 50,000 UGX
         [BillingCycle.QUARTERLY]: 135000, // 135,000 UGX (10% discount)
         [BillingCycle.YEARLY]: 480000, // 480,000 UGX (20% discount)
       },
-      [SubscriptionPlan.PRO]: {
+      [TenantPlan.PRO]: {
         [BillingCycle.MONTHLY]: 100000, // 100,000 UGX
         [BillingCycle.QUARTERLY]: 270000, // 270,000 UGX (10% discount)
         [BillingCycle.YEARLY]: 960000, // 960,000 UGX (20% discount)
       },
-      [SubscriptionPlan.ENTERPRISE]: {
+      [TenantPlan.ENTERPRISE]: {
         [BillingCycle.MONTHLY]: 250000, // 250,000 UGX
         [BillingCycle.QUARTERLY]: 675000, // 675,000 UGX (10% discount)
         [BillingCycle.YEARLY]: 2400000, // 2,400,000 UGX (20% discount)
@@ -278,7 +277,7 @@ export class SubscriptionsService {
     };
   }
 
-  calculatePrice(plan: SubscriptionPlan, billingCycle: BillingCycle): number {
+  calculatePrice(plan: TenantPlan, billingCycle: BillingCycle): number {
     const prices = this.getPlanPrices();
     return prices[plan][billingCycle];
   }
