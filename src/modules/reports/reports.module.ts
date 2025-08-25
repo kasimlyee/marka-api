@@ -6,7 +6,7 @@ import { ReportsController } from './reports.controller';
 import { Report } from './report.entity';
 import { ReportTemplate } from './report-template.entity';
 import { ReportsProcessor } from './reports.processor';
-import { StudentsModule } from '../students';
+import { StudentsModule } from '@marka/modules/students';
 import { AssessmentsModule } from '../assessments/assessments.module';
 import { GradingModule } from '../grading/grading.module';
 import { TenantsModule } from '../tenants/tenants.module';
