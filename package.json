@@ -25,6 +25,7 @@
     "migration:revert": "npm run typeorm -- migration:revert -d src/config/database.config.ts"
   },
   "dependencies": {
+    "@eslint/js": "^9.34.0",
     "@nestjs/bull": "^0.6.3",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
@@ -43,6 +44,7 @@
     "class-validator": "^0.13.2",
     "csv-parser": "^3.0.0",
     "dotenv": "^16.0.3",
+    "globals": "^16.3.0",
     "handlebars": "^4.7.7",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^2.3.3",
@@ -58,6 +60,7 @@
     "rxjs": "^7.5.7",
     "twilio": "^3.82.0",
     "typeorm": "^0.3.10",
+    "typescript-eslint": "^8.40.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

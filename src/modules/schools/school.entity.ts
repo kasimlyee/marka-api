@@ -10,7 +10,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Tenant } from '@marka/modules/tenants';
-import { Student } from '../students/student.entity';
+import { Student } from '@marka/modules/students';
 
 export enum SchoolLevel {
   PRIMARY = 'primary',
