@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
 import { IsOptional, IsEnum } from 'class-validator';
-import { Role } from '../user.entity';
+import { Role } from '@marka/common';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()

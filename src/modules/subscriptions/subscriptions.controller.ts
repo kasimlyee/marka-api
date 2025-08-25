@@ -13,12 +13,16 @@ import {
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '../users/user.entity';
-import { Tenant } from '@marka/common';
+import { Tenant, Role } from '@marka/common';
 import { Subscription } from './subscription.entity';
 
 @ApiTags('subscriptions')
@@ -31,7 +35,10 @@ export class SubscriptionsController {
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new subscription' })
-  @ApiResponse({ status: 201, description: 'Subscription successfully created' })
+  @ApiResponse({
+    status: 201,
+    description: 'Subscription successfully created',
+  })
   async create(
     @Body() createSubscriptionDto: CreateSubscriptionDto,
     @Tenant() tenant,
@@ -84,13 +91,20 @@ export class SubscriptionsController {
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Activate a subscription' })
-  @ApiResponse({ status: 200, description: 'Subscription activated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription activated successfully',
+  })
   async activateSubscription(
     @Param('id') id: string,
     @Tenant() tenant,
     @Query('paymentReference') paymentReference?: string,
   ): Promise<Subscription> {
-    return this.subscriptionsService.activateSubscription(id, tenant.id, paymentReference);
+    return this.subscriptionsService.activateSubscription(
+      id,
+      tenant.id,
+      paymentReference,
+    );
   }
 
   @Patch(':id/cancel')
@@ -98,7 +112,10 @@ export class SubscriptionsController {
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Cancel a subscription' })
-  @ApiResponse({ status: 200, description: 'Subscription cancelled successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription cancelled successfully',
+  })
   async cancelSubscription(
     @Param('id') id: string,
     @Tenant() tenant,

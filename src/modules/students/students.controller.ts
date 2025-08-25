@@ -20,8 +20,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard, RolesGuard, Roles } from '@marka/modules/auth';
-import { Role } from '@marka/modules/users';
-import { Tenant } from '@marka/common';
+import { Tenant, Role } from '@marka/common';
 import { Student } from './student.entity';
 
 @ApiTags('students')

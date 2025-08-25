@@ -19,8 +19,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { Roles, RolesGuard, JwtAuthGuard } from '@marka/modules/auth';
-import { Role } from '../users/user.entity';
-import { Tenant } from '@marka/common';
+import { Tenant, Role } from '@marka/common';
 import { Assessment } from './assessment.entity';
 import { ExamLevel } from './assessment.entity';
 

@@ -10,7 +10,8 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { User, Role, UsersService } from '@marka/modules/users';
+import { User, UsersService } from '@marka/modules/users';
+import { Role } from '@marka/common';
 
 @Injectable()
 export class AuthService {

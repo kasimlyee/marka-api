@@ -22,8 +22,7 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '@marka/modules/users/user.entity';
-import { Tenant } from '@marka/common';
+import { Tenant, Role } from '@marka/common';
 import { Subject } from './subject.entity';
 
 @ApiTags('subjects')

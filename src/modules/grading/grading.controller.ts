@@ -15,7 +15,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard, RolesGuard, Roles } from '@marka/modules/auth';
-import { Role } from '@marka/modules/users';
+import { Role } from '@marka/common';
 import { ExamLevel } from '@marka/modules/assessments';
 
 @ApiTags('grading')

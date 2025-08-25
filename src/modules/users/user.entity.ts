@@ -9,13 +9,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Tenant } from '@marka/modules/tenants';
-
-export enum Role {
-  SUPER_ADMIN = 'super_admin',
-  ADMIN = 'admin',
-  TEACHER = 'teacher',
-  PARENT = 'parent',
-}
+import { Role } from '@marka/common';
 
 @Entity('users')
 export class User {

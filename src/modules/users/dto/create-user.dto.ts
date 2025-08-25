@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsPhoneNumber,
 } from 'class-validator';
-import { Role } from '../user.entity';
+import { Role } from '@marka/common';
 
 export class CreateUserDto {
   @ApiProperty({ description: 'User email' })
