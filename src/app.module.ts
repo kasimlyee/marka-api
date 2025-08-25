@@ -18,13 +18,15 @@ import { SchoolsModule } from '@marka/modules/schools/schools.module';
 import { StudentsModule } from '@marka/modules/students';
 import { SubjectsModule } from '@marka/modules/subjects';
 import { GradingModule } from '@marka/modules/grading';
-import { ReportsModule } from '@marka/modules/reports';
+//import { ReportsModule } from '@marka/modules/reports';
 import { ImportModule } from '@marka/modules/import';
 import { PaymentsModule } from '@marka/modules/payments';
 import { SubscriptionsModule } from '@marka/modules/subscriptions';
 import { NotificationsModule } from '@marka/modules/notifications';
 import { AuditModule } from '@marka/modules/audit';
 import { AssessmentsModule } from '@marka/modules/assessments';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -78,8 +80,8 @@ import { AssessmentsModule } from '@marka/modules/assessments';
       useFactory: (configService: ConfigService) => ({
         throttlers: [
           {
-            ttl: configService.get('throttler.ttl') ?? 60,
-            limit: configService.get('throttler.limit') ?? 10,
+            ttl: 60,
+            limit: 10,
           },
         ],
       }),
@@ -95,7 +97,7 @@ import { AssessmentsModule } from '@marka/modules/assessments';
     StudentsModule,
     SubjectsModule,
     GradingModule,
-    ReportsModule,
+    // ReportsModule,
     ImportModule,
     PaymentsModule,
     SubscriptionsModule,
@@ -103,7 +105,7 @@ import { AssessmentsModule } from '@marka/modules/assessments';
     AuditModule,
     AssessmentsModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

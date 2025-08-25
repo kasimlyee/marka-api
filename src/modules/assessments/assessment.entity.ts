@@ -8,9 +8,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Tenant } from '@marka/modules/tenants';
-import { Student } from '@marka/modules/students';
-import { Subject } from '@marka/modules/subjects';
+import { Tenant } from '../tenants/tenant.entity';
+import { Student } from '../students/student.entity';
+import { Subject } from '../subjects/subject.entity';
 
 export enum AssessmentType {
   EXAM = 'exam',

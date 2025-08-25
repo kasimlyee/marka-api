@@ -7,7 +7,7 @@ import {
   Index,
   OneToMany,
 } from 'typeorm';
-import { TenantPlan } from '@marka/common';
+import { TenantPlan } from '../../common/enums/tenant-plan.enum';
 
 export enum IsolationMode {
   RLS = 'rls', // Row Level Security

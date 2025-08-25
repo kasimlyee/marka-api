@@ -9,8 +9,8 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Tenant } from '@marka/modules/tenants';
-import { Student } from '@marka/modules/students';
+import { Tenant } from '../tenants/tenant.entity';
+import { Student } from '../students/student.entity';
 
 export enum SchoolLevel {
   PRIMARY = 'primary',

@@ -9,8 +9,8 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Tenant } from '@marka/modules/tenants';
-import { Assessment } from '@marka/modules/assessments';
+import { Tenant } from '../tenants/tenant.entity';
+import { Assessment } from '../assessments/assessment.entity';
 
 export enum SubjectType {
   CORE = 'core',

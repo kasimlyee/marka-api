@@ -9,7 +9,13 @@ import { TenantService, Tenant } from '@marka/modules/tenants';
 
 @Injectable()
 export class TenantInterceptor implements NestInterceptor {
-  constructor(private readonly tenantService: TenantService) {}
+  // Make constructor private to enforce factory usage
+  private constructor(private readonly tenantService: TenantService) {}
+
+  // Factory method
+  static create(tenantService: TenantService): TenantInterceptor {
+    return new TenantInterceptor(tenantService);
+  }
 
   async intercept(
     context: ExecutionContext,

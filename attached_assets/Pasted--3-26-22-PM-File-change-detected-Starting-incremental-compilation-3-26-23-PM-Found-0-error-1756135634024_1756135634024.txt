@@ -1,0 +1,39 @@
+[3:26:22 PM] File change detected. Starting incremental compilation...
+
+[3:26:23 PM] Found 0 errors. Watching for file changes.
+
+[Nest] 10549  - 08/25/2025, 3:26:25 PM     LOG [NestFactory] Starting Nest application...
+[Nest] 10549  - 08/25/2025, 3:26:25 PM     LOG [InstanceLoader] AppModule dependencies initialized +85ms
+[Nest] 10549  - 08/25/2025, 3:26:25 PM     LOG [InstanceLoader] TypeOrmModule dependencies initialized +0ms
+[Nest] 10549  - 08/25/2025, 3:26:25 PM     LOG [InstanceLoader] PassportModule dependencies initialized +0ms
+[Nest] 10549  - 08/25/2025, 3:26:25 PM     LOG [InstanceLoader] MulterModule dependencies initialized +0ms
+[Nest] 10549  - 08/25/2025, 3:26:25 PM   ERROR [ExceptionHandler] Nest can't resolve dependencies of the SubscriptionsService (?, TenantService, PaymentService, BullQueue_subscription-tasks). Please make sure that the argument SubscriptionRepository at index [0] is available in the SubscriptionsModule context.
+
+Potential solutions:
+- Is SubscriptionsModule a valid NestJS module?
+- If SubscriptionRepository is a provider, is it part of the current SubscriptionsModule?
+- If SubscriptionRepository is exported from a separate @Module, is that module imported within SubscriptionsModule?
+  @Module({
+    imports: [ /* the Module containing SubscriptionRepository */ ]
+  })
+
+Error: Nest can't resolve dependencies of the SubscriptionsService (?, TenantService, PaymentService, BullQueue_subscription-tasks). Please make sure that the argument SubscriptionRepository at index [0] is available in the SubscriptionsModule context.
+
+Potential solutions:
+- Is SubscriptionsModule a valid NestJS module?
+- If SubscriptionRepository is a provider, is it part of the current SubscriptionsModule?
+- If SubscriptionRepository is exported from a separate @Module, is that module imported within SubscriptionsModule?
+  @Module({
+    imports: [ /* the Module containing SubscriptionRepository */ ]
+  })
+
+    at Injector.lookupComponentInParentModules (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:247:19)
+    at Injector.resolveComponentInstance (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:200:33)
+    at resolveParam (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:120:38)
+    at async Promise.all (index 0)
+    at Injector.resolveConstructorParams (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:135:27)
+    at Injector.loadInstance (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:61:13)
+    at Injector.loadProvider (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:88:9)
+    at /home/runner/workspace/node_modules/@nestjs/core/injector/instance-loader.js:56:13
+    at async Promise.all (index 3)
+    at InstanceLoader.createInstancesOfProviders (/home/runner/workspace/node_modules/@nestjs/core/injector/instance-loader.js:55:9)

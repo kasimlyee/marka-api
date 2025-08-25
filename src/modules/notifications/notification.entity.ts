@@ -8,7 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Tenant } from '@marka/modules/tenants';
+import { Tenant } from '../tenants/tenant.entity';
 
 export enum NotificationType {
   EMAIL = 'email',

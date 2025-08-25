@@ -7,8 +7,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Tenant } from '@marka/modules/tenants';
-import { User } from '@marka/modules/users';
+import { Tenant } from '../tenants/tenant.entity';
+import { User } from '../users/user.entity';
 
 export enum ActionType {
   CREATE = 'create',

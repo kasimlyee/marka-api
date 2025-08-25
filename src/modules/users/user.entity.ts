@@ -8,8 +8,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Tenant } from '@marka/modules/tenants';
-import { Role } from '@marka/common';
+import { Tenant } from '../tenants/tenant.entity';
+import { Role } from '../../common/enums/role.enum';
 
 @Entity('users')
 export class User {
