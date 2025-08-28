@@ -7,8 +7,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import { TenantService } from '@marka/modules/tenants';
-import { PaymentService } from '@marka/modules/payments';
+import { TenantService } from '../tenants/tenants.service';
+import { PaymentService } from '../payments/payments.service';
 import {
   SubscriptionStatus,
   BillingCycle,

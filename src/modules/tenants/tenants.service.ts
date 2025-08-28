@@ -56,6 +56,16 @@ export class TenantService {
   }
 
   async findByIdentifier(identifier: string): Promise<Tenant> {
+    // Validate UUID format first
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+    if (!uuidRegex.test(identifier)) {
+      throw new NotFoundException(
+        `Invalid tenant identifier format: ${identifier}`,
+      );
+    }
+
     // Try to find by subdomain or API key
     const tenant = await this.tenantRepository.findOne({
       where: [

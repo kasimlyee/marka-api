@@ -6,7 +6,7 @@ import { Assessment } from './assessment.entity';
 import { GradingModule } from '../grading/grading.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Assessment]), forwardRef(() => GradingModule)],
+  imports: [TypeOrmModule.forFeature([Assessment]), GradingModule],
   controllers: [AssessmentsController],
   providers: [AssessmentsService],
   exports: [AssessmentsService],

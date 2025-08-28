@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 import axios from 'axios';
 import { PaymentProvider, PaymentStatus, PaymentType } from './payment.entity';
-import { Subscription } from '@marka/modules/subscriptions';
+import { Subscription } from '../subscriptions/subscription.entity';
 
 @Injectable()
 export class PaymentService {

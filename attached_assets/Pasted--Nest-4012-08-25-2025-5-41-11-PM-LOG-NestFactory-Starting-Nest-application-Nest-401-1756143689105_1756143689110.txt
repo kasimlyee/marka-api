@@ -1,0 +1,32 @@
+[Nest] 4012  - 08/25/2025, 5:41:11 PM     LOG [NestFactory] Starting Nest application...
+[Nest] 4012  - 08/25/2025, 5:41:11 PM     LOG [InjectorLogger] Nest encountered an undefined dependency. This may be due to a circular import or a missing dependency declaration.
+[Nest] 4012  - 08/25/2025, 5:41:11 PM   ERROR [ExceptionHandler] Nest can't resolve dependencies of the AssessmentsService (AssessmentRepository, ?). Please make sure that the argument dependency at index [1] is available in the AssessmentsModule context.
+
+Potential solutions:
+- Is AssessmentsModule a valid NestJS module?
+- If dependency is a provider, is it part of the current AssessmentsModule?
+- If dependency is exported from a separate @Module, is that module imported within AssessmentsModule?
+  @Module({
+    imports: [ /* the Module containing dependency */ ]
+  })
+
+Error: Nest can't resolve dependencies of the AssessmentsService (AssessmentRepository, ?). Please make sure that the argument dependency at index [1] is available in the AssessmentsModule context.
+
+Potential solutions:
+- Is AssessmentsModule a valid NestJS module?
+- If dependency is a provider, is it part of the current AssessmentsModule?
+- If dependency is exported from a separate @Module, is that module imported within AssessmentsModule?
+  @Module({
+    imports: [ /* the Module containing dependency */ ]
+  })
+
+    at Injector.resolveSingleParam (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:184:19)
+    at resolveParam (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:120:49)
+    at Array.map (<anonymous>)
+    at Injector.resolveConstructorParams (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:135:58)
+    at Injector.loadInstance (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:61:24)
+    at Injector.loadProvider (/home/runner/workspace/node_modules/@nestjs/core/injector/injector.js:88:20)
+    at /home/runner/workspace/node_modules/@nestjs/core/injector/instance-loader.js:56:33
+    at Array.map (<anonymous>)
+    at InstanceLoader.createInstancesOfProviders (/home/runner/workspace/node_modules/@nestjs/core/injector/instance-loader.js:55:36)
+    at /home/runner/workspace/node_modules/@nestjs/core/injector/instance-loader.js:40:24

@@ -5,12 +5,13 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { TenantService } from '@marka/modules/tenants';
+import { TenantService } from '../tenants/tenants.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { User, UsersService } from '@marka/modules/users';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/user.entity';
 import { Role } from '@marka/common';
 
 @Injectable()

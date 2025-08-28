@@ -20,8 +20,8 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Tenant } from '@marka/common';
-import { Tenant as TenantEntity } from '@marka/modules/tenants';
-import { User } from '@marka/modules/users';
+import { Tenant as TenantEntity } from '../tenants/tenant.entity';
+import { User } from '../users/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')

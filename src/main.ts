@@ -9,7 +9,7 @@ import {
   TimeoutInterceptor,
   RateLimitInterceptor,
 } from '@marka/common';
-import { TenantService } from '@marka/modules/tenants';
+import { TenantService } from './modules/tenants/tenants.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -46,7 +46,7 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   // Enable CORS
   app.enableCors({
@@ -54,6 +54,9 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
+
+  //Global Prefix
+  app.setGlobalPrefix('api/v1');
 
   // Start the application
   const port = process.env.PORT || 3000;

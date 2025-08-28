@@ -18,7 +18,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '@marka/common';
-import { ExamLevel } from '@marka/modules/assessments';
+import { ExamLevel } from '../assessments/assessment.entity';
 
 @ApiTags('grading')
 @Controller('grading')

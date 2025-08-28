@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Grade, ExamLevel, Assessment } from '@marka/modules/assessments';
+import { Grade, ExamLevel, Assessment } from '../assessments/assessment.entity';
 
 export interface GradingResult {
   grade: string;

@@ -6,7 +6,9 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { RolesGuard, Roles, JwtAuthGuard } from '@marka/modules/auth';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { Tenant, Role } from '@marka/common';
 import { AuditLog } from './audit-log.entity';
 import { ActionType } from './audit-log.entity';

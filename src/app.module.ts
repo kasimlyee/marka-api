@@ -11,20 +11,20 @@ import {
   paystackConfig,
   storageConfig,
 } from '@marka/config';
-import { AuthModule } from '@marka/modules/auth';
-import { TenantsModule } from '@marka/modules/tenants';
-import { UsersModule } from '@marka/modules/users';
-import { SchoolsModule } from '@marka/modules/schools/schools.module';
-import { StudentsModule } from '@marka/modules/students';
-import { SubjectsModule } from '@marka/modules/subjects';
-import { GradingModule } from '@marka/modules/grading';
+import { AuthModule } from './modules/auth/auth.module';
+import { TenantsModule } from './modules/tenants/tenants.module';
+import { UsersModule } from './modules/users/users.module';
+import { SchoolsModule } from './modules/schools/schools.module';
+import { StudentsModule } from './modules/students/students.module';
+import { SubjectsModule } from './modules/subjects/subjects.module';
+import { GradingModule } from './modules/grading/grading.module';
 //import { ReportsModule } from '@marka/modules/reports';
-import { ImportModule } from '@marka/modules/import';
-import { PaymentsModule } from '@marka/modules/payments';
-import { SubscriptionsModule } from '@marka/modules/subscriptions';
-import { NotificationsModule } from '@marka/modules/notifications';
-import { AuditModule } from '@marka/modules/audit';
-import { AssessmentsModule } from '@marka/modules/assessments';
+import { ImportModule } from './modules/import/import.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { AuditModule } from './modules/audit/audit.module';
+import { AssessmentsModule } from './modules/assessments/assessments.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
