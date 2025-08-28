@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-  ManyToOne,
+  OneToOne,
   JoinColumn,
   OneToMany,
 } from 'typeorm';
@@ -71,7 +71,7 @@ export class School {
   @Column({ type: 'uuid' })
   tenantId: string;
 
-  @ManyToOne(() => Tenant, (tenant) => tenant.schools)
+  @OneToOne(() => Tenant, (tenant) => tenant.school)
   @JoinColumn({ name: 'tenantId' })
   tenant: Tenant;
 

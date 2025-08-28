@@ -6,8 +6,10 @@ import {
   UpdateDateColumn,
   Index,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { TenantPlan } from '../../common/enums/tenant-plan.enum';
+import { School } from '../schools/school.entity';
 
 export enum IsolationMode {
   RLS = 'rls', // Row Level Security
@@ -78,8 +80,8 @@ export class Tenant {
   @OneToMany('User', 'tenant')
   users: any[];
 
-  @OneToMany('School', 'tenant')
-  schools: any[];
+  @OneToOne('School', 'tenant')
+  school: School;
 
   @OneToMany('Subscription', 'tenant')
   subscriptions: any[];
