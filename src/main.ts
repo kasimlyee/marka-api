@@ -14,6 +14,9 @@ import { TenantService } from './modules/tenants/tenants.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  //Global Prefix
+  app.setGlobalPrefix('api/v1');
+
   // Global pipes
   app.useGlobalPipes(
     new ValidationPipe({
@@ -54,9 +57,6 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
-
-  //Global Prefix
-  app.setGlobalPrefix('api/v1');
 
   // Start the application
   const port = process.env.PORT || 3000;

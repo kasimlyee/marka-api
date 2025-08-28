@@ -1,4 +1,3 @@
-
 export class AppService {
   getHello(): string {
     return `
@@ -47,9 +46,9 @@ export class AppService {
           <h1>📘 Marka API - Report Cards</h1>
           <p><span class="label">Description</span>: SaaS Report Card Generator for Ugandan Schools (UNEB-compliant)</p>
           <p><span class="label">Version</span>: 1.0.0</p>
-          <p><span class="label">Developer</span>: Kasim Lyee (<a href="mailto:kasiimlyee@gmail.com">kasiimlyee@gmail.com</a>)</p>
+          <p><span class="label">Developer</span>: Kasim Lyee (<a href="mailto:lyee@codewithlyee.com">lyee@codewithlyee.com</a>)</p>
           <p><span class="label">Repository</span>: <a href="https://marka.codewithlyee.com">marka.codewithlyee.com</a></p>
-          <p><span class="label">Docs</span>: <a href="/api/v1/docs">/api/v1/docs</a></p>
+          <p><span class="label">Docs</span>: <a href="/docs">/docs</a></p>
           <p><span class="label">Uptime</span>: ${process.uptime().toFixed(2)}s</p>
           <p><span class="label">Timestamp</span>: ${new Date().toISOString()}</p>
           <div class="footer">🚀 API is up and running</div>
