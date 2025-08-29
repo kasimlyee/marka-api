@@ -5,11 +5,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import {
   AllExceptionsFilter,
   HttpExceptionFilter,
-  TenantInterceptor,
   TimeoutInterceptor,
   RateLimitInterceptor,
 } from '@marka/common';
-import { TenantService } from './modules/tenants/tenants.service';
+import { MultipartValidationPipe } from './common/pipes/multipart-validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,7 +18,7 @@ async function bootstrap() {
 
   // Global pipes
   app.useGlobalPipes(
-    new ValidationPipe({
+    new MultipartValidationPipe({
       whitelist: true,
       transform: true,
       forbidNonWhitelisted: true,

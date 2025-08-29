@@ -7,7 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Request,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { SchoolsService } from './schools.service';
 import { CreateSchoolDto } from './dto/create-school.dto';
@@ -17,6 +18,8 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
+  ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -24,6 +27,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Tenant, Role } from '@marka/common';
 import { School } from './school.entity';
 import { TenantGuard } from '../tenants/guard/tenant.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('schools')
 @Controller('schools')
@@ -51,6 +55,35 @@ export class SchoolsController {
   @ApiResponse({ status: 200, description: 'Return all schools' })
   async findAll(@Tenant() tenant): Promise<School[]> {
     return this.schoolsService.findAll(tenant.id);
+  }
+
+  @Post(':id/logo')
+  @UseInterceptors(FileInterceptor('logo'))
+  @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Upload school logo' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'School logo image file',
+    schema: {
+      type: 'object',
+      properties: {
+        logo: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Logo uploaded successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid file format' })
+  @ApiResponse({ status: 404, description: 'School not found' })
+  async uploadLogo(
+    @Param('id') schoolId: string,
+    @UploadedFile() logo: Express.Multer.File,
+  ) {
+    return this.schoolsService.uploadSchoolLogo(schoolId, logo);
   }
 
   @Get(':id')

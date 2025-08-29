@@ -27,6 +27,7 @@ import { AuditModule } from './modules/audit/audit.module';
 import { AssessmentsModule } from './modules/assessments/assessments.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { StoreModule } from './modules/store/store.module';
 
 @Module({
   imports: [
@@ -104,6 +105,7 @@ import { AppService } from './app.service';
     NotificationsModule,
     AuditModule,
     AssessmentsModule,
+    StoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],
