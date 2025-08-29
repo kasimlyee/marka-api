@@ -84,6 +84,10 @@ export class TenantService {
     return tenant;
   }
 
+  async findById(id: string): Promise<Tenant> {
+    return this.findOne(id);
+  }
+
   async update(id: string, updateTenantDto: UpdateTenantDto): Promise<Tenant> {
     const tenant = await this.findOne(id);
     Object.assign(tenant, updateTenantDto);

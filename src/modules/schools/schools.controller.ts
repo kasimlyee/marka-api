@@ -23,6 +23,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Tenant, Role } from '@marka/common';
 import { School } from './school.entity';
+import { TenantGuard } from '../tenants/guard/tenant.guard';
 
 @ApiTags('schools')
 @Controller('schools')
@@ -30,7 +31,7 @@ export class SchoolsController {
   constructor(private readonly schoolsService: SchoolsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new school' })
@@ -43,7 +44,7 @@ export class SchoolsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all schools' })
@@ -53,7 +54,7 @@ export class SchoolsController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get a school by ID' })
@@ -63,7 +64,7 @@ export class SchoolsController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a school' })
@@ -77,7 +78,7 @@ export class SchoolsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a school' })

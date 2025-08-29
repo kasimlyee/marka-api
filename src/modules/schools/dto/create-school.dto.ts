@@ -56,12 +56,10 @@ export class CreateSchoolDto {
   email?: string;
 
   @ApiProperty({ description: 'Website URL', required: false })
-  @IsOptional()
   @IsUrl()
   website?: string;
 
   @ApiProperty({ description: 'Logo URL', required: false })
-  @IsOptional()
   @IsUrl()
   logoUrl?: string;
 }

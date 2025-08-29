@@ -5,20 +5,31 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { TenantService } from '../tenants/tenants.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+//import { TenantService } from '../tenants/tenants.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/user.entity';
+import { Tenant } from '../tenants/tenant.entity';
 import { Role } from '@marka/common';
+import { CreateTenantDto } from '../tenants/dto/create-tenant.dto';
+import { RegisterResponseDto } from './dto/register-response.dto';
+import { plainToInstance } from 'class-transformer';
+import { UserResponseDto } from '../users/dto/user-response.dto';
+import { TenantResponseDto } from '../tenants/dto/tenant-response.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    //private readonly tenantService: TenantService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -78,31 +89,66 @@ export class AuthService {
     };
   }
 
-  async register(registerDto: RegisterDto): Promise<{
-    accessToken: string;
-    refreshToken: string;
-    user: User;
-  }> {
-    // Check if user already exists
-    const existingUser = await this.usersService.findByEmail(registerDto.email);
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+  async register(registerDto: RegisterDto): Promise<RegisterResponseDto> {
+    const queryRunner =
+      this.userRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // Check if user already exists (outside transaction for read consistency)
+      const existingUser = await this.usersService.findByEmail(
+        registerDto.email,
+      );
+      if (existingUser) {
+        throw new ConflictException('User with this email already exists');
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+
+      // Create Tenant
+      const createTenantDto: CreateTenantDto = {
+        name: registerDto.firstName + ' ' + registerDto.lastName,
+        subdomain: registerDto.email.split('@')[0],
+        contactEmail: registerDto.email,
+        plan: registerDto.plan,
+      };
+
+      const tenant = await queryRunner.manager.save(
+        queryRunner.manager.create(Tenant, createTenantDto),
+      );
+
+      // Create user with tenantId
+      const user = await queryRunner.manager.save(
+        queryRunner.manager.create(User, {
+          ...registerDto,
+          password: hashedPassword,
+          role: Role.ADMIN,
+          tenantId: tenant.id,
+        }),
+      );
+
+      await queryRunner.commitTransaction();
+
+      const userResponse = plainToInstance(UserResponseDto, user, {
+        excludeExtraneousValues: true,
+      });
+
+      const tenantResponse = plainToInstance(TenantResponseDto, tenant, {
+        excludeExtraneousValues: true,
+      });
+      return {
+        user: userResponse,
+        tenant: tenantResponse,
+        message: 'Registration successful',
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-
-    // Create user
-    const user = await this.usersService.create({
-      ...registerDto,
-      password: hashedPassword,
-      role: Role.ADMIN, // First user is always an admin
-    });
-
-    return this.login({
-      email: registerDto.email,
-      password: registerDto.password,
-    });
   }
 
   async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<{

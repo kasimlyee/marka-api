@@ -30,6 +30,7 @@ export class TenantController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new tenant' })
+  @Roles(Role.SUPER_ADMIN)
   @ApiResponse({ status: 201, description: 'Tenant successfully created' })
   async create(@Body() createTenantDto: CreateTenantDto) {
     return this.tenantService.create(createTenantDto);
