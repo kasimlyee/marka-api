@@ -32,11 +32,11 @@ async function bootstrap() {
   // Global filters
   app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());
 
-  const tenantService = app.get(TenantService);
-  const tenantInterceptor = TenantInterceptor.create(tenantService);
+  // const tenantService = app.get(TenantService);
+  // const tenantInterceptor = TenantInterceptor.create(tenantService);
   // Global interceptors
   app.useGlobalInterceptors(
-    tenantInterceptor,
+    // tenantInterceptor,
     new TimeoutInterceptor(),
     new RateLimitInterceptor(),
   );

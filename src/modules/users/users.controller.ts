@@ -25,6 +25,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Tenant, Role } from '@marka/common';
 import { User } from './user.entity';
+import {TenantGuard} from "../tenants/guard/tenant.guard"
 
 @ApiTags('users')
 @Controller('users')
@@ -32,7 +33,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new user' })
@@ -45,7 +46,7 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all users' })

@@ -68,7 +68,8 @@ export class School {
   @Column({ type: 'jsonb', nullable: true })
   settings: Record<string, any>;
 
-  @Column({ type: 'uuid' })
+  @Column({ unique: true })
+  @Index()
   tenantId: string;
 
   @OneToOne(() => Tenant, (tenant) => tenant.school)
