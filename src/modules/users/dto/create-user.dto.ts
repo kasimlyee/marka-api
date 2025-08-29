@@ -44,4 +44,8 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   refreshTokenHash?: string;
+
+  @ApiProperty({ description: 'Tenant ID' })
+  @IsString()
+  tenantId: string;
 }

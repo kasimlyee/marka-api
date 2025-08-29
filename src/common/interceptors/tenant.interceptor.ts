@@ -26,6 +26,16 @@ export class TenantInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
 
+    console.log('=== TENANT INTERCEPTOR START ===');
+    console.log('Request URL:', request.url);
+    console.log('Request method:', request.method);
+    console.log('Request host:', request.headers.host);
+    console.log('Request user:', request.user); // Should be undefined at this point
+
+    if (this.shouldSkipTenantProcessing(request)) {
+      return next.handle();
+    }
+
     // Extract tenant identifier from request
     const tenantIdentifier = this.extractTenantIdentifier(request);
 
@@ -99,5 +109,16 @@ export class TenantInterceptor implements NestInterceptor {
     }
 
     return null;
+  }
+
+  private shouldSkipTenantProcessing(request: any): boolean {
+    const url = request.url;
+    const method = request.method;
+
+    // Skip tenant processing for POST requests to auth/register
+    if (method === 'POST' && url.includes('/auth/register')) {
+      return true;
+    }
+    return false;
   }
 }
