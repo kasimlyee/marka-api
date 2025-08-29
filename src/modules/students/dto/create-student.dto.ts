@@ -1,9 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsEnum, IsEmail, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsEmail,
+  IsISO8601,
+  IsPhoneNumber,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import { Gender, StudentStatus } from '../student.entity';
 
 export class CreateStudentDto {
-  @ApiProperty({ description: 'Learner Identification Number', required: false })
+  @ApiProperty({
+    description: 'Learner Identification Number',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   lin?: string;
@@ -30,10 +41,14 @@ export class CreateStudentDto {
   @IsEnum(Gender)
   gender?: Gender;
 
-  @ApiProperty({ description: 'Date of birth', required: false })
+  @ApiProperty({
+    description: 'Date of birth in YYYY-MM-DD format',
+    required: false,
+    example: '2012-08-29',
+  })
   @IsOptional()
-  @IsDateString()
-  dateOfBirth?: Date;
+  @IsISO8601({ strict: true }) // Use IsISO8601 instead of IsDateString
+  dateOfBirth?: string; // Use string instead of Date
 
   @ApiProperty({ description: 'Place of birth', required: false })
   @IsOptional()
@@ -47,7 +62,7 @@ export class CreateStudentDto {
 
   @ApiProperty({ description: 'Phone number', required: false })
   @IsOptional()
-  @IsString()
+  @IsPhoneNumber() // Use proper phone validation
   phone?: string;
 
   @ApiProperty({ description: 'Email address', required: false })
@@ -62,7 +77,7 @@ export class CreateStudentDto {
 
   @ApiProperty({ description: 'Parent phone', required: false })
   @IsOptional()
-  @IsString()
+  @IsPhoneNumber()
   parentPhone?: string;
 
   @ApiProperty({ description: 'Parent email', required: false })
@@ -89,15 +104,23 @@ export class CreateStudentDto {
   @IsEnum(StudentStatus)
   status?: StudentStatus;
 
-  @ApiProperty({ description: 'Admission date', required: false })
+  @ApiProperty({
+    description: 'Admission date in YYYY-MM-DD format',
+    required: false,
+    example: '2025-08-29',
+  })
   @IsOptional()
-  @IsDateString()
-  admissionDate?: Date;
+  @IsISO8601({ strict: true })
+  admissionDate?: string;
 
-  @ApiProperty({ description: 'Graduation date', required: false })
+  @ApiProperty({
+    description: 'Graduation date in YYYY-MM-DD format',
+    required: false,
+    example: '2025-08-29',
+  })
   @IsOptional()
-  @IsDateString()
-  graduationDate?: Date;
+  @IsISO8601({ strict: true })
+  graduationDate?: string;
 
   @ApiProperty({ description: 'Photo URL', required: false })
   @IsOptional()

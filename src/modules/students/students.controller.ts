@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
   Query,
+  NotFoundException
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -24,14 +25,16 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Tenant, Role } from '@marka/common';
 import { Student } from './student.entity';
+import { TenantGuard } from '../tenants/guard/tenant.guard';
+import { SchoolsService } from '../schools/schools.service';
 
 @ApiTags('students')
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly studentsService: StudentsService) {}
+  constructor(private readonly studentsService: StudentsService, private readonly schoolsService: SchoolsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new student' })
@@ -40,11 +43,18 @@ export class StudentsController {
     @Body() createStudentDto: CreateStudentDto,
     @Tenant() tenant,
   ): Promise<Student> {
+    // Get the school for this tenant
+    const school = await this.schoolsService.findByTenantId(tenant.id);
+
+    if (!school) {
+      throw new NotFoundException('School not found for this tenant');
+    }
+    createStudentDto.schoolId = school.id;
     return this.studentsService.create(createStudentDto, tenant.id);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER, Role.PARENT)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all students' })
@@ -57,7 +67,7 @@ export class StudentsController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER, Role.PARENT)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get a student by ID' })
@@ -67,7 +77,7 @@ export class StudentsController {
   }
 
   @Get('lin/:lin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER, Role.PARENT)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get a student by LIN' })
@@ -80,7 +90,7 @@ export class StudentsController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a student' })
@@ -94,7 +104,7 @@ export class StudentsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a student' })

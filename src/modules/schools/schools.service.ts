@@ -64,4 +64,14 @@ export class SchoolsService {
     const school = await this.findOne(id, tenantId);
     await this.schoolRepository.remove(school);
   }
+
+  async findByTenantId(tenantId: string): Promise<School> {
+    const school = await this.schoolRepository.findOne({
+      where: { tenantId },
+    });
+    if (!school) {
+      throw new NotFoundException(`School for tenant ${tenantId} not found`);
+    }
+    return school;
+  }
 }
