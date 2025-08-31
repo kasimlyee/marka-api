@@ -9,7 +9,7 @@ import {
   UseGuards,
   UploadedFile,
   UseInterceptors,
-  UsePipes,
+  UsePipes
 } from '@nestjs/common';
 import { SchoolsService } from './schools.service';
 import { CreateSchoolDto } from './dto/create-school.dto';
@@ -37,45 +37,16 @@ export class SchoolsController {
   constructor(private readonly schoolsService: SchoolsService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('logo'))
-  @UsePipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: false, // Allow extra fields from multipart
-    transform: true,
-  }))
-  @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new school with optional logo' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'School data with optional logo file',
-    schema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-        code: { type: 'string' },
-        level: { type: 'string', enum: Object.values(SchoolLevel) },
-        address: { type: 'string' },
-        city: { type: 'string' },
-        district: { type: 'string' },
-        region: { type: 'string' },
-        postalCode: { type: 'string' },
-        phone: { type: 'string' },
-        email: { type: 'string', format: 'email' },
-        website: { type: 'string', format: 'uri' },
-        logo: { type: 'string', format: 'binary' },
-      },
-      required: ['name', 'level'],
-    },
-  })
+  @ApiOperation({ summary: 'Create a new school' })
+  @ApiResponse({ status: 201, description: 'School successfully created' })
   async create(
-    @Body() createSchoolDto: CreateSchoolWithFileDto,
-    @UploadedFile() logo: Express.Multer.File,
-    @Req() req: any,
-  ) {
-    const tenantId = req.user.tenantId;
-    return this.schoolsService.create(createSchoolDto, tenantId, logo);
+    @Body() createSchoolDto: CreateSchoolDto,
+    @Tenant() tenant,
+  ): Promise<School> {
+    return this.schoolsService.create(createSchoolDto, tenant.id);
   }
 
   @Get()

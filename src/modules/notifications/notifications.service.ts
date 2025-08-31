@@ -1,307 +1,218 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Notification } from './notification.entity';
+import { Repository, MoreThan } from 'typeorm';
+import { Notification } from './entities/notification.entity';
+import { NotificationChannel } from './enums/notification-channel.enum';
+import { NotificationStatus } from './enums/notification-status.enum';
+import { EmailService } from './channels/email.service';
+import { SmsService } from './channels/sms.service';
+import { WebSocketService } from './channels/websocket.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
-import {
-  NotificationType,
-  NotificationStatus,
-  NotificationCategory,
-} from './notification.entity';
-import { InjectQueue } from '@nestjs/bull';
-import type { Queue } from 'bull';
-import * as nodemailer from 'nodemailer';
-import * as twilio from 'twilio';
+import { NotificationPriority } from './enums/notification-priority.enum';
 
 @Injectable()
-export class NotificationsService {
-  private readonly emailTransporter: nodemailer.Transporter;
-  private readonly twilioClient: twilio.Twilio;
+export class NotificationService implements OnModuleInit {
+  private readonly logger = new Logger(NotificationService.name);
+  private readonly retryAttempts: number;
+  private readonly retryDelay: number;
 
   constructor(
     @InjectRepository(Notification)
-    private readonly notificationRepository: Repository<Notification>,
-    @InjectQueue('notifications') private notificationsQueue: Queue,
+    private readonly notificationRepo: Repository<Notification>,
+    private readonly emailService: EmailService,
+    private readonly smsService: SmsService,
+    private readonly websocketService: WebSocketService,
+    private readonly configService: ConfigService,
   ) {
-    // Initialize email transporter
-    this.emailTransporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT ?? '587', 10) || 587,
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
-
-    // Initialize Twilio client
-    /** if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-      this.twilioClient = twilio(
-        process.env.TWILIO_ACCOUNT_SID,
-        process.env.TWILIO_AUTH_TOKEN,
-      );
-    }
-  */
+    this.retryAttempts = 3;
+    this.retryDelay = 1000; // 1 second
   }
 
-  async create(
+  async onModuleInit() {
+    // Retry failed notifications on startup
+    await this.retryFailedNotifications();
+  }
+
+  async createNotification(
     createNotificationDto: CreateNotificationDto,
-    tenantId: string,
   ): Promise<Notification> {
-    const notification = this.notificationRepository.create({
-      ...createNotificationDto,
-      tenantId,
-    });
+    const notification = this.notificationRepo.create(createNotificationDto);
+    const savedNotification = await this.notificationRepo.save(notification);
 
-    const savedNotification =
-      await this.notificationRepository.save(notification);
-
-    // Add to queue for sending
-    await this.notificationsQueue.add('send', {
-      notificationId: savedNotification.id,
+    // Send notification asynchronously
+    this.sendNotificationWithRetry(savedNotification).catch((error) => {
+      this.logger.error(
+        `Failed to send notification after retries: ${error.message}`,
+      );
     });
 
     return savedNotification;
   }
 
-  async findAll(tenantId: string): Promise<Notification[]> {
-    return this.notificationRepository.find({
-      where: { tenantId },
-      order: { createdAt: 'DESC' },
-    });
-  }
-
-  async findOne(id: string, tenantId: string): Promise<Notification> {
-    const notification = await this.notificationRepository.findOne({
-      where: { id, tenantId },
-    });
-    if (!notification) {
-      throw new NotFoundException(`Notification with ID ${id} not found`);
-    }
-    return notification;
-  }
-
-  async update(
-    id: string,
-    updateNotificationDto: UpdateNotificationDto,
-    tenantId: string,
-  ): Promise<Notification> {
-    const notification = await this.findOne(id, tenantId);
-    Object.assign(notification, updateNotificationDto);
-    return this.notificationRepository.save(notification);
-  }
-
-  async remove(id: string, tenantId: string): Promise<void> {
-    const notification = await this.findOne(id, tenantId);
-    await this.notificationRepository.remove(notification);
-  }
-
-  async sendNotification(id: string): Promise<void> {
-    const notification = await this.notificationRepository.findOne({
-      where: { id },
-    });
-
-    if (!notification) {
-      throw new NotFoundException(`Notification with ID ${id} not found`);
-    }
-
+  private async sendNotificationWithRetry(
+    notification: Notification,
+    attempt: number = 1,
+  ): Promise<void> {
     try {
-      // Update status to processing
-      await this.update(
-        id,
-        { status: NotificationStatus.SENT },
-        notification.tenantId,
-      );
-
-      // Send based on type
-      switch (notification.type) {
-        case NotificationType.EMAIL:
-          await this.sendEmail(notification);
-          break;
-        case NotificationType.SMS:
-          await this.sendSMS(notification);
-          break;
-        case NotificationType.PUSH:
-          await this.sendPushNotification(notification);
-          break;
-        default:
-          throw new Error(
-            `Unsupported notification type: ${notification.type}`,
-          );
-      }
-
-      // Update status to delivered
-      await this.update(
-        id,
-        {
-          status: NotificationStatus.DELIVERED,
-        },
-        notification.tenantId,
-      );
+      await this.sendNotification(notification);
     } catch (error) {
-      // Update status to failed
-      await this.update(
-        id,
-        {
+      if (attempt < this.retryAttempts) {
+        this.logger.warn(
+          `Retry attempt ${attempt} for notification ${notification.id}`,
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.retryDelay * attempt),
+        );
+        await this.sendNotificationWithRetry(notification, attempt + 1);
+      } else {
+        await this.notificationRepo.update(notification.id, {
           status: NotificationStatus.FAILED,
-          //providerResponse: error.message,
-        },
-        notification.tenantId,
+          errorMessage: error.message,
+        });
+        throw error;
+      }
+    }
+  }
+
+  async sendNotification(notification: Notification): Promise<void> {
+    try {
+      const sendPromises = notification.channels.map((channel: any) =>
+        this.sendToChannel(notification, channel),
       );
+
+      await Promise.allSettled(sendPromises);
+
+      // Update notification status
+      await this.notificationRepo.update(notification.id, {
+        status: NotificationStatus.SENT,
+        sentAt: new Date(),
+      });
+
+      this.logger.log(`Notification ${notification.id} sent successfully`);
+    } catch (error) {
+      this.logger.error(
+        `Notification sending failed: ${error.message}`,
+        error.stack,
+      );
+
+      await this.notificationRepo.update(notification.id, {
+        status: NotificationStatus.FAILED,
+        errorMessage: error.message,
+      });
+
       throw error;
     }
   }
 
-  private async sendEmail(notification: Notification): Promise<void> {
-    if (!this.emailTransporter) {
-      throw new Error('Email transporter not configured');
-    }
-
-    await this.emailTransporter.sendMail({
-      from: process.env.SMTP_FROM || 'noreply@marka.ug',
-      to: notification.recipient,
-      subject: notification.title,
-      html: notification.content,
-    });
-  }
-
-  private async sendSMS(notification: Notification): Promise<void> {
-    if (!this.twilioClient) {
-      throw new Error('Twilio client not configured');
-    }
-
-    await this.twilioClient.messages.create({
-      body: notification.content,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: notification.recipient,
-    });
-  }
-
-  private async sendPushNotification(
+  private async sendToChannel(
     notification: Notification,
+    channel: NotificationChannel,
   ): Promise<void> {
-    // This would integrate with a push notification service like Firebase Cloud Messaging
-    // For now, just log the notification
-    console.log(
-      `Push notification: ${notification.title} - ${notification.content}`,
+    switch (channel) {
+      case NotificationChannel.EMAIL:
+        await this.emailService.send({
+          to: notification.recipient,
+          subject: notification.title,
+          template: notification.template,
+          context: notification.context,
+          priority: notification.priority,
+        });
+        break;
+
+      case NotificationChannel.SMS:
+        await this.smsService.send({
+          to: notification.recipient,
+          template: notification.template,
+          context: notification.context,
+        });
+        break;
+
+      case NotificationChannel.IN_APP:
+        await this.websocketService.sendToUser(notification.recipient, {
+          type: 'notification',
+          data: {
+            id: notification.id,
+            title: notification.title,
+            content: notification.content,
+            category: notification.category,
+            priority: notification.priority,
+            createdAt: notification.createdAt,
+          },
+        });
+        break;
+
+      case NotificationChannel.PUSH:
+        // Implement push notification service
+        this.logger.warn('Push notifications not implemented yet');
+        break;
+    }
+  }
+
+  async retryFailedNotifications(): Promise<void> {
+    const failedNotifications = await this.notificationRepo.find({
+      where: {
+        status: NotificationStatus.FAILED,
+        createdAt: MoreThan(new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24 hours
+      },
+    });
+
+    for (const notification of failedNotifications) {
+      this.sendNotificationWithRetry(notification).catch((error) => {
+        this.logger.error(
+          `Failed to retry notification ${notification.id}: ${error.message}`,
+        );
+      });
+    }
+  }
+
+  async findUserNotifications(
+    userId: string,
+    options: {
+      limit?: number;
+      offset?: number;
+      category?: string;
+      read?: boolean;
+    } = {},
+  ): Promise<{ notifications: Notification[]; total: number }> {
+    const { limit = 50, offset = 0, category, read } = options;
+
+    const query = this.notificationRepo
+      .createQueryBuilder('notification')
+      .where('notification.recipient = :userId', { userId })
+      .orderBy('notification.createdAt', 'DESC')
+      .skip(offset)
+      .take(limit);
+
+    if (category) {
+      query.andWhere('notification.category = :category', { category });
+    }
+
+    if (read !== undefined) {
+      query.andWhere('notification.isRead = :read', { read });
+    }
+
+    const [notifications, total] = await query.getManyAndCount();
+    return { notifications, total };
+  }
+
+  async markAsRead(notificationId: string, userId: string): Promise<void> {
+    await this.notificationRepo.update(
+      { id: notificationId, recipient: userId },
+      { isRead: true, readAt: new Date() },
     );
   }
 
-  async sendReportReadyNotification(
-    tenantId: string,
-    recipient: string,
-    reportData: {
-      studentName: string;
-      reportNo: string;
-      downloadUrl: string;
-    },
-  ): Promise<Notification> {
-    const title = 'Report Ready for Download';
-    const content = `
-      <p>Dear Parent/Guardian,</p>
-      <p>The report card for <strong>${reportData.studentName}</strong> is ready for download.</p>
-      <p>Report Number: <strong>${reportData.reportNo}</strong></p>
-      <p>You can download it using the link below:</p>
-      <p><a href="${reportData.downloadUrl}">Download Report</a></p>
-      <p>Thank you,<br>Marka Team</p>
-    `;
-
-    return this.create(
-      {
-        title,
-        content,
-        type: NotificationType.EMAIL,
-        category: NotificationCategory.REPORT_READY,
-        recipient,
-        metadata: {
-          reportNo: reportData.reportNo,
-          downloadUrl: reportData.downloadUrl,
-        },
-      },
-      tenantId,
+  async markAllAsRead(userId: string): Promise<void> {
+    await this.notificationRepo.update(
+      { recipient: userId, isRead: false },
+      { isRead: true, readAt: new Date() },
     );
   }
 
-  async sendPaymentReceivedNotification(
-    tenantId: string,
-    recipient: string,
-    paymentData: {
-      amount: number;
-      reference: string;
-      plan: string;
-    },
-  ): Promise<Notification> {
-    const title = 'Payment Received';
-    const content = `
-      <p>Dear Admin,</p>
-      <p>We have received a payment of <strong>UGX ${paymentData.amount.toLocaleString()}</strong> for your subscription.</p>
-      <p>Payment Reference: <strong>${paymentData.reference}</strong></p>
-      <p>Plan: <strong>${paymentData.plan}</strong></p>
-      <p>Thank you for your continued patronage.</p>
-      <p>Best regards,<br>Marka Team</p>
-    `;
-
-    return this.create(
-      {
-        title,
-        content,
-        type: NotificationType.EMAIL,
-        category: NotificationCategory.PAYMENT_RECEIVED,
-        recipient,
-        metadata: {
-          amount: paymentData.amount,
-          reference: paymentData.reference,
-          plan: paymentData.plan,
-        },
-      },
-      tenantId,
-    );
-  }
-
-  async sendSubscriptionRenewalNotification(
-    tenantId: string,
-    recipient: string,
-    subscriptionData: {
-      plan: string;
-      expiryDate: Date;
-      renewalUrl: string;
-    },
-  ): Promise<Notification> {
-    const title = 'Subscription Renewal Reminder';
-    const content = `
-      <p>Dear Admin,</p>
-      <p>Your <strong>${subscriptionData.plan}</strong> subscription is due for renewal on <strong>${subscriptionData.expiryDate.toDateString()}</strong>.</p>
-      <p>To avoid service interruption, please renew your subscription using the link below:</p>
-      <p><a href="${subscriptionData.renewalUrl}">Renew Subscription</a></p>
-      <p>Thank you,<br>Marka Team</p>
-    `;
-
-    return this.create(
-      {
-        title,
-        content,
-        type: NotificationType.EMAIL,
-        category: NotificationCategory.SUBSCRIPTION_RENEWAL,
-        recipient,
-        metadata: {
-          plan: subscriptionData.plan,
-          expiryDate: subscriptionData.expiryDate,
-          renewalUrl: subscriptionData.renewalUrl,
-        },
-      },
-      tenantId,
-    );
-  }
-
-  async markAsRead(id: string, tenantId: string): Promise<Notification> {
-    return this.update(
-      id,
-      {
-        status: NotificationStatus.READ,
-        //readAt: new Date(),
-      },
-      tenantId,
-    );
+  async getUnreadCount(userId: string): Promise<number> {
+    return this.notificationRepo.count({
+      where: { recipient: userId, isRead: false },
+    });
   }
 }

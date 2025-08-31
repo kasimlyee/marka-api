@@ -28,6 +28,7 @@ import { AssessmentsModule } from './modules/assessments/assessments.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StoreModule } from './modules/store/store.module';
+import { VerificationModule } from './modules/verification/verification.module';
 
 @Module({
   imports: [
@@ -106,6 +107,7 @@ import { StoreModule } from './modules/store/store.module';
     AuditModule,
     AssessmentsModule,
     StoreModule,
+    VerificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
