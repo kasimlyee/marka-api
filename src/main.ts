@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -8,25 +8,17 @@ import {
   TimeoutInterceptor,
   RateLimitInterceptor,
 } from '@marka/common';
-import { MultipartValidationPipe } from './common/pipes/multipart-validation.pipe';
+import { SmartValidationPipe } from '@marka/common/pipes/smart-validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const reflector = app.get(Reflector);
 
   //Global Prefix
   app.setGlobalPrefix('api/v1');
 
   // Global pipes
-  app.useGlobalPipes(
-    new MultipartValidationPipe({
-      whitelist: true,
-      transform: true,
-      forbidNonWhitelisted: true,
-      transformOptions: {
-        enableImplicitConversion: true,
-      },
-    }),
-  );
+  app.useGlobalPipes(new SmartValidationPipe(reflector));
 
   // Global filters
   app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionFilter());

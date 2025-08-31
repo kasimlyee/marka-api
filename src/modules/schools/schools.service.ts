@@ -21,6 +21,7 @@ export class SchoolsService {
   async create(
     createSchoolDto: CreateSchoolDto,
     tenantId: string,
+    logoFile?: Express.Multer.File,
   ): Promise<School> {
     // Check if a school already exists for the tenant
     const existingSchool = await this.schoolRepository.findOne({
@@ -31,10 +32,30 @@ export class SchoolsService {
         `School already exists for tenant ${tenantId}, Only one school allowed per tenant`,
       );
     }
+
+    let logoUrl: string | undefined;
+
+    // Upload logo if provided
+    if (logoFile) {
+      const result = await this.storeService.uploadFile(logoFile, {
+        folder: 'school-logos',
+        fileName: `school-${Date.now()}`, // Use timestamp since we don't have school ID yet
+        contentType: 'image/jpeg',
+        transformations: [
+          { width: 300, height: 300, crop: 'fill' },
+          { quality: 'auto:good' },
+        ],
+      });
+      logoUrl = result.url;
+    }
+
+    // Create school with logo URL if uploaded
     const school = this.schoolRepository.create({
       ...createSchoolDto,
       tenantId,
+      logoUrl: logoUrl || createSchoolDto.logoUrl, // Use uploaded URL or provided URL
     });
+
     return this.schoolRepository.save(school);
   }
 
@@ -56,9 +77,32 @@ export class SchoolsService {
     id: string,
     updateSchoolDto: UpdateSchoolDto,
     tenantId: string,
+    logoFile?: Express.Multer.File,
   ): Promise<School> {
     const school = await this.findOne(id, tenantId);
-    Object.assign(school, updateSchoolDto);
+
+    let logoUrl: string | undefined;
+
+    // Upload new logo if provided
+    if (logoFile) {
+      const result = await this.storeService.uploadFile(logoFile, {
+        folder: 'school-logos',
+        fileName: `school-${id}`,
+        contentType: 'image/jpeg',
+        transformations: [
+          { width: 300, height: 300, crop: 'fill' },
+          { quality: 'auto:good' },
+        ],
+      });
+      logoUrl = result.url;
+    }
+
+    // Update school data
+    Object.assign(school, {
+      ...updateSchoolDto,
+      ...(logoUrl && { logoUrl }), // Only update logoUrl if new file was uploaded
+    });
+
     return this.schoolRepository.save(school);
   }
 
@@ -81,12 +125,11 @@ export class SchoolsService {
     const school = await this.schoolRepository.findOne({
       where: { id: schoolId },
     });
-
     if (!school) {
       throw new NotFoundException(`School with ID ${schoolId} not found`);
     }
 
-    //upload to cloudinary
+    // Upload to cloudinary
     const result = await this.storeService.uploadFile(file, {
       folder: 'school-logos',
       fileName: `school-${schoolId}`,
@@ -97,10 +140,9 @@ export class SchoolsService {
       ],
     });
 
-    //store the url in the school database
+    // Store the url in the school database
     school.logoUrl = result.url;
     await this.schoolRepository.save(school);
-
     return { url: result.url };
   }
 }

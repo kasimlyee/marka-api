@@ -31,6 +31,7 @@ import { Student } from './student.entity';
 import { TenantGuard } from '../tenants/guard/tenant.guard';
 import { SchoolsService } from '../schools/schools.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { SkipValidation } from '@marka/common/decorators/skip-validation.decorator';
 
 @ApiTags('students')
 @Controller('students')
@@ -77,6 +78,7 @@ export class StudentsController {
   @UseInterceptors(FileInterceptor('photo'))
   @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER)
+  @SkipValidation()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Upload student photo' })
   @ApiConsumes('multipart/form-data')
