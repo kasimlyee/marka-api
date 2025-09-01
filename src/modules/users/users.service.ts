@@ -9,13 +9,17 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { NotificationService } from '../notifications/notifications.service';
 import * as bcrypt from 'bcrypt';
+import { NotificationChannel } from '../notifications/enums/notification-channel.enum';
+import { NotificationCategory } from '../notifications/enums/notification-category.enum';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async create(createUserDto: CreateUserDto, tenantId?: string): Promise<User> {
@@ -35,7 +39,24 @@ export class UsersService {
       tenantId,
     });
 
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+
+    // Send welcome notification
+    await this.notificationService.createNotification({
+      title: 'Welcome to Marka!',
+      content:
+        'Your account has been created successfully. Please verify your email to get started.',
+      channels: [NotificationChannel.EMAIL],
+      category: NotificationCategory.ACCOUNT_ACTIVATION,
+      recipient: user.email,
+      template: 'welcome',
+      context: {
+        userName: user.firstName,
+        dashboardUrl: `${process.env.FRONTEND_URL}/dashboard`,
+      },
+    });
+
+    return user;
   }
 
   async findAll(tenantId: string): Promise<User[]> {
@@ -101,5 +122,16 @@ export class UsersService {
     // Hash and update new password
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
     await this.update(userId, { password: hashedNewPassword });
+
+    // Send password changed notification
+    await this.notificationService.createNotification({
+      title: 'Password Changed Successfully',
+      content:
+        'Your password has been changed successfully. If you did not initiate this change, please contact support immediately.',
+      channels: [NotificationChannel.EMAIL, NotificationChannel.IN_APP],
+      category: NotificationCategory.PASSWORD_RESET,
+      recipient: user.email,
+      template: 'password-changed',
+    });
   }
 }

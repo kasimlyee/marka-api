@@ -22,7 +22,7 @@ import { GradingModule } from './modules/grading/grading.module';
 import { ImportModule } from './modules/import/import.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
-import { NotificationsModule } from './modules/notifications/notifications.module';
+import { NotificationModule } from './modules/notifications/notifications.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { AssessmentsModule } from './modules/assessments/assessments.module';
 import { AppController } from './app.controller';
@@ -103,7 +103,7 @@ import { VerificationModule } from './modules/verification/verification.module';
     ImportModule,
     PaymentsModule,
     SubscriptionsModule,
-    NotificationsModule,
+    NotificationModule,
     AuditModule,
     AssessmentsModule,
     StoreModule,
