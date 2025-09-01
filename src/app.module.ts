@@ -29,6 +29,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StoreModule } from './modules/store/store.module';
 import { VerificationModule } from './modules/verification/verification.module';
+import { EmailModule } from './common/services/email/email.module';
 
 @Module({
   imports: [
@@ -108,6 +109,7 @@ import { VerificationModule } from './modules/verification/verification.module';
     AssessmentsModule,
     StoreModule,
     VerificationModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
