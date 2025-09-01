@@ -14,7 +14,7 @@ export class EmailTemplateService {
     new Map();
 
   constructor(private readonly configService: ConfigService) {
-    this.templatesPath = this.configService.get('email.templates.path');
+    this.templatesPath = this.configService.get('email.templates.path')!;
     this.registerHelpers();
     this.loadTemplates();
   }
@@ -145,10 +145,13 @@ export class EmailTemplateService {
       );
       const textCompiled = this.compiledTemplates.get(`${templateId}_text`);
 
+      if (!htmlCompiled || !subjectCompiled) {
+        throw new Error(`Template ${templateId} is missing required parts`);
+      }
       const result = {
         html: htmlCompiled(data),
         subject: subjectCompiled(data),
-        text: textCompiled ? textCompiled(data) : undefined,
+        text: textCompiled?.(data),
       };
 
       return result;

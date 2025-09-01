@@ -9,6 +9,7 @@ import {
   JoinColumn,
   BeforeInsert,
   BeforeUpdate,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Tenant } from '../tenants/tenant.entity';
 import { Role } from '../../common/enums/role.enum';
@@ -94,6 +95,9 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @BeforeInsert()
   @BeforeUpdate()

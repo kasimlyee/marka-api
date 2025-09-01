@@ -98,12 +98,12 @@ export class EmailService implements OnModuleInit {
     }
 
     // Add tracking pixels if enabled
-    if (this.configService.get('email.tracking.enabled')) {
+    if (this.configService.get('email.tracking.enabled') && html) {
       html = this.addTrackingPixel(html, emailOptions);
     }
 
     const mailOptions: Mail.Options = {
-      from: `${this.emailConfig.from.name} <${this.emailConfig.from.email}>`,
+      ...otherOptions,
       to: Array.isArray(emailOptions.to)
         ? emailOptions.to.join(',')
         : emailOptions.to,
@@ -111,7 +111,6 @@ export class EmailService implements OnModuleInit {
       html,
       text,
       replyTo: emailOptions.replyTo || this.emailConfig.replyTo,
-      ...otherOptions,
     };
 
     // Add custom headers

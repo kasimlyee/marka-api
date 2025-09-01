@@ -6,10 +6,10 @@ export interface EmailConfig {
     user: string;
     pass: string;
   };
-  from: {
-    name: string;
-    email: string;
-  };
+  //from: {
+  // name: string;
+  // email: string;
+  //};
   replyTo?: string;
   pool?: boolean;
   maxConnections?: number;

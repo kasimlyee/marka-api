@@ -6,7 +6,7 @@ import {
   OnQueueFailed,
 } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
-import { Job } from 'bull';
+import type { Job } from 'bull';
 import { EmailService } from './email.service';
 import { EmailOptions } from './interfaces/email.interface';
 

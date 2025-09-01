@@ -30,7 +30,6 @@ export class EmailRetryService {
     retryConfig: Partial<RetryConfig> = {},
   ): Promise<{ messageId: string; success: boolean; attempts: number }> {
     const config = { ...this.defaultRetryConfig, ...retryConfig };
-    let lastError: Error;
 
     for (let attempt = 1; attempt <= config.maxRetries; attempt++) {
       try {
@@ -42,7 +41,6 @@ export class EmailRetryService {
 
         return { ...result, attempts: attempt };
       } catch (error) {
-        lastError = error;
         this.logger.warn(
           `Email send attempt ${attempt} failed: ${error.message}`,
         );
@@ -58,7 +56,7 @@ export class EmailRetryService {
     this.logger.error(
       `Failed to send email after ${config.maxRetries} attempts`,
     );
-    throw lastError;
+    throw Error;
   }
 
   private calculateDelay(attempt: number, config: RetryConfig): number {

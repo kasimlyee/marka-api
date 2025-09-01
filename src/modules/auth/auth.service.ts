@@ -21,9 +21,6 @@ import { RegisterResponseDto } from './dto/register-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { UserResponseDto } from '../users/dto/user-response.dto';
 import { TenantResponseDto } from '../tenants/dto/tenant-response.dto';
-import { NotificationService } from '../notifications/notifications.service';
-import { NotificationChannel } from '../notifications/enums/notification-channel.enum';
-import { NotificationCategory } from '../notifications/enums/notification-category.enum';
 import { UserStatus } from '../users/enums/user-status.enum';
 
 @Injectable()
@@ -34,7 +31,6 @@ export class AuthService {
     //private readonly tenantService: TenantService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly notificationService: NotificationService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -153,21 +149,6 @@ export class AuthService {
 
       const tenantResponse = plainToInstance(TenantResponseDto, tenant, {
         excludeExtraneousValues: true,
-      });
-
-      //send welcome email
-      await this.notificationService.createNotification({
-        title: 'Welcome to Marka!',
-        content:
-          'Your account has been created successfully. Please verify your email to get started.',
-        channels: [NotificationChannel.EMAIL],
-        category: NotificationCategory.ACCOUNT_ACTIVATION,
-        recipient: user.email,
-        template: 'welcome',
-        context: {
-          userName: user.firstName,
-          dashboardUrl: `${process.env.FRONTEND_URL}/dashboard`,
-        },
       });
 
       return {
