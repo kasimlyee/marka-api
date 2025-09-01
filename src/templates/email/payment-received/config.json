@@ -1,0 +1,16 @@
+const paymentReceivedConfig = {
+  "name": "Payment Received",
+  "subject": "✅ Payment Received - Marka Subscription",
+  "variables": [
+    "firstName", 
+    "amount", 
+    "currency", 
+    "paymentReference", 
+    "subscriptionPlan",
+    "validUntil", 
+    "invoiceUrl", 
+    "supportEmail"
+  ],
+  "category": "payment_received",
+  "active": true
+};

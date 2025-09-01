@@ -1,0 +1,173 @@
+const reportReadyHTML = `
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Report Card Ready</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+                color: white;
+                padding: 30px;
+                margin: -30px -30px 30px -30px;
+                border-radius: 10px 10px 0 0;
+            }
+            .logo {
+                font-size: 28px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .report-info {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+                border-left: 4px solid #4caf50;
+            }
+            .download-section {
+                text-align: center;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 30px;
+                border-radius: 10px;
+                margin: 20px 0;
+            }
+            .download-button {
+                display: inline-block;
+                padding: 15px 30px;
+                background-color: white;
+                color: #667eea;
+                text-decoration: none;
+                border-radius: 25px;
+                font-weight: bold;
+                margin: 10px;
+            }
+            .instructions {
+                background-color: #e3f2fd;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 30px;
+                font-size: 14px;
+                color: #666;
+                border-top: 1px solid #eee;
+                padding-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="logo">📊 MARKA</div>
+                <h2>Report Card Ready!</h2>
+                <p>UNEB-Compliant Results Available</p>
+            </div>
+
+            <p>Dear {{parentName}},</p>
+
+            <p>
+                Great news! The report card for
+                <strong>{{studentName}}</strong> is now ready and available for
+                download.
+            </p>
+
+            <div class="report-info">
+                <h3>📋 Report Details</h3>
+                <p><strong>Student:</strong> {{studentName}}</p>
+                <p><strong>School:</strong> {{schoolName}}</p>
+                <p><strong>Exam Level:</strong> {{examLevel}}</p>
+                <p><strong>Term:</strong> {{term}}</p>
+                <p><strong>Academic Year:</strong> {{year}}</p>
+                <p>
+                    <strong>Generated:</strong> {{formatDate (new Date) 'MMMM
+                    Do, YYYY'}}
+                </p>
+            </div>
+
+            <div class="download-section">
+                <h3>📥 Download Your Report</h3>
+                <p>
+                    Click the buttons below to view or download the report card
+                </p>
+                <a href="{{reportUrl}}" class="download-button"
+                    >🔍 View Report</a
+                >
+                <a href="{{downloadUrl}}" class="download-button"
+                    >💾 Download PDF</a
+                >
+            </div>
+
+            <div class="instructions">
+                <h3>📖 How to Access Your Report:</h3>
+                <ol>
+                    <li>
+                        <strong>View Online:</strong> Click "View Report" to see
+                        the report in your browser
+                    </li>
+                    <li>
+                        <strong>Download PDF:</strong> Click "Download PDF" to
+                        save a copy to your device
+                    </li>
+                    <li>
+                        <strong>Print:</strong> Use your browser's print
+                        function or print the downloaded PDF
+                    </li>
+                </ol>
+            </div>
+
+            <div
+                style="
+                    background-color: #fff3cd;
+                    border: 1px solid #ffeaa7;
+                    color: #856404;
+                    padding: 15px;
+                    border-radius: 5px;
+                    margin: 20px 0;
+                "
+            >
+                <strong>📌 Important Notes:</strong><br />
+                • This report is UNEB-compliant and follows official grading
+                standards<br />
+                • Keep this report for your records<br />
+                • Contact the school if you have questions about specific
+                grades<br />
+                • Report links are valid for 30 days
+            </div>
+
+            <div class="footer">
+                <p>
+                    This report was generated using the Marka UNEB-compliant
+                    system.
+                </p>
+                <p>Questions about grades? Contact {{schoolName}} directly.</p>
+                <p>
+                    Technical issues? Contact us at
+                    <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>
+                </p>
+                <p>&copy; 2025 Marka. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+</html>
+`;

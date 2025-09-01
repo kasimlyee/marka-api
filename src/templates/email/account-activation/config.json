@@ -1,0 +1,7 @@
+const accountActivationConfig = {
+  "name": "Account Activation",
+  "subject": "Activate Your Marka Account - {{firstName}}",
+  "variables": ["firstName", "activationUrl", "expiresIn", "supportEmail"],
+  "category": "authentication",
+  "active": true
+};

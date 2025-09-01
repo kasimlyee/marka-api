@@ -1,4 +1,10 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { EmailService } from './common/services/email/email.service';
+
+@Injectable()
 export class AppService {
+  private readonly logger = new Logger(AppService.name);
+  constructor(private readonly emailService: EmailService) {}
   getHello(): string {
     return `
       <!DOCTYPE html>
@@ -56,5 +62,20 @@ export class AppService {
       </body>
       </html>
     `;
+  }
+
+  async testMail(): Promise<boolean> {
+    const { messageId, success } = await this.emailService.sendEmail({
+      to: 'user@example.com',
+      subject: 'Welcome!',
+      template: 'welcome',
+      templateData: {
+        name: 'John Doe',
+        verificationUrl: 'https://marka.ug/verify/123',
+      },
+    });
+
+    this.logger.log(`Email sent: ${messageId}, Success: ${success}`);
+    return success;
   }
 }

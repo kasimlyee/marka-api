@@ -1,0 +1,190 @@
+const studentRegisteredHTML = `
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Student Registered</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+                color: white;
+                padding: 30px;
+                margin: -30px -30px 30px -30px;
+                border-radius: 10px 10px 0 0;
+            }
+            .logo {
+                font-size: 28px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .student-info {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+                border-left: 4px solid #2196f3;
+            }
+            .action-button {
+                display: inline-block;
+                padding: 12px 30px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 25px;
+                font-weight: bold;
+                margin: 20px 0;
+            }
+            .next-steps {
+                background-color: #e3f2fd;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 30px;
+                font-size: 14px;
+                color: #666;
+                border-top: 1px solid #eee;
+                padding-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="logo">📊 MARKA</div>
+                <h2>📚 Student Registered!</h2>
+                <p>New student added to the system</p>
+            </div>
+
+            <p>Dear {{teacherName}},</p>
+
+            <p>
+                A new student has been successfully registered in the Marka
+                system for {{schoolName}}.
+            </p>
+
+            <div class="student-info">
+                <h3>👨‍🎓 Student Information</h3>
+                <table style="width: 100%; border-collapse: collapse">
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <td style="padding: 10px 0"><strong>Name:</strong></td>
+                        <td style="text-align: right">{{studentName}}</td>
+                    </tr>
+                    {{#if studentLIN}}
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <td style="padding: 10px 0"><strong>LIN:</strong></td>
+                        <td style="text-align: right; font-family: monospace">
+                            {{studentLIN}}
+                        </td>
+                    </tr>
+                    {{/if}}
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <td style="padding: 10px 0"><strong>Class:</strong></td>
+                        <td style="text-align: right">
+                            {{class}}{{#if stream}} - {{stream}}{{/if}}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <td style="padding: 10px 0">
+                            <strong>Admission Date:</strong>
+                        </td>
+                        <td style="text-align: right">
+                            {{formatDate admissionDate 'MMMM Do, YYYY'}}
+                        </td>
+                    </tr>
+                    {{#if parentName}}
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <td style="padding: 10px 0">
+                            <strong>Parent/Guardian:</strong>
+                        </td>
+                        <td style="text-align: right">{{parentName}}</td>
+                    </tr>
+                    {{/if}} {{#if parentEmail}}
+                    <tr>
+                        <td style="padding: 10px 0">
+                            <strong>Parent Email:</strong>
+                        </td>
+                        <td style="text-align: right">{{parentEmail}}</td>
+                    </tr>
+                    {{/if}}
+                </table>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0">
+                <a href="{{dashboardUrl}}" class="action-button"
+                    >👀 View Student Profile</a
+                >
+            </div>
+
+            <div class="next-steps">
+                <h3>📝 Next Steps:</h3>
+                <ol>
+                    <li>
+                        <strong>Complete Profile:</strong> Add any missing
+                        student information
+                    </li>
+                    <li>
+                        <strong>Set Up Subjects:</strong> Assign relevant
+                        subjects for the student's level
+                    </li>
+                    <li>
+                        <strong>Begin Assessments:</strong> Start recording
+                        continuous assessments
+                    </li>
+                    <li>
+                        <strong>Parent Communication:</strong> Ensure parent
+                        contact information is accurate
+                    </li>
+                </ol>
+            </div>
+
+            <div
+                style="
+                    background-color: #e8f5e8;
+                    border: 1px solid #4caf50;
+                    color: #2e7d32;
+                    padding: 15px;
+                    border-radius: 5px;
+                    margin: 20px 0;
+                "
+            >
+                <strong>💡 Pro Tip:</strong> Complete student profiles help
+                generate more accurate and comprehensive report cards. Make sure
+                to include all required UNEB information.
+            </div>
+
+            <div class="footer">
+                <p>
+                    Student management made easy with Marka's UNEB-compliant
+                    system.
+                </p>
+                <p>
+                    Need help? Contact us at
+                    <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>
+                </p>
+                <p>&copy; 2025 Marka. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+</html>
+`;

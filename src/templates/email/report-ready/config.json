@@ -1,0 +1,17 @@
+const reportReadyConfig = {
+  "name": "Report Card Ready",
+  "subject": "📊 Report Card Ready - {{studentName}} ({{examLevel}})",
+  "variables": [
+    "parentName", 
+    "studentName", 
+    "examLevel", 
+    "term", 
+    "year", 
+    "schoolName",
+    "reportUrl", 
+    "downloadUrl", 
+    "supportEmail"
+  ],
+  "category": "report_ready",
+  "active": true
+};

@@ -28,6 +28,8 @@ import { AssessmentsModule } from './modules/assessments/assessments.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StoreModule } from './modules/store/store.module';
+import { EmailModule } from './common/services/email/email.module';
+import emailConfig from './config/email.config';
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { StoreModule } from './modules/store/store.module';
         jwtConfig,
         paystackConfig,
         storageConfig,
+        emailConfig,
       ],
       envFilePath: ['.env'],
     }),
@@ -105,6 +108,8 @@ import { StoreModule } from './modules/store/store.module';
     AuditModule,
     AssessmentsModule,
     StoreModule,
+    //services
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,0 +1,30 @@
+const welcomeUserText = `
+Welcome to Marka, {{firstName}}!
+
+Thank you for joining Marka, Uganda's premier UNEB-compliant report card generation system.
+
+Account Details:
+- Name: {{firstName}} {{lastName}}
+- Email: {{email}}
+- Role: {{role}}
+{{#if schoolName}}- School: {{schoolName}}{{/if}}
+
+What you can do with Marka:
+✓ Generate UNEB-compliant report cards for PLE, UCE, and UACE
+✓ Manage student assessments and grades
+✓ Track student performance analytics
+✓ Automated grade calculations
+✓ Secure multi-tenant architecture
+✓ Real-time notifications and alerts
+
+Get Started: {{loginUrl}}
+
+Next Steps:
+1. Access your dashboard using the link above
+2. Complete your profile setup
+3. {{#if (eq role 'admin')}}Set up your school information{{/if}}{{#if (eq role 'teacher')}}Start adding student assessments{{/if}}{{#if (eq role 'parent')}}View your child's progress{{/if}}
+
+Need help? Contact us at {{supportEmail}}
+
+© 2025 Marka. All rights reserved.
+`;
