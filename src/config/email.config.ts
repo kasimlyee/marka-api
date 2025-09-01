@@ -19,7 +19,7 @@ export default registerAs('email', () => ({
   },
   replyTo: process.env.EMAIL_REPLY_TO,
   templates: {
-    path: process.env.EMAIL_TEMPLATES_PATH || './src/templates',
+    path: process.env.EMAIL_TEMPLATES_PATH || './src/templates/email',
   },
   queue: {
     redis: {

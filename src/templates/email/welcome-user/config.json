@@ -1,4 +1,4 @@
-const welcomeUserConfig = {
+ {
   "name": "Welcome User",
   "subject": "Welcome to Marka - {{firstName}}!",
   "variables": [
@@ -12,4 +12,4 @@ const welcomeUserConfig = {
   ],
   "category": "onboarding",
   "active": true
-};
+}

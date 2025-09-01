@@ -1,7 +1,13 @@
-const passwordResetConfig = {
+{
   "name": "Password Reset",
   "subject": "Reset Your Marka Password",
-  "variables": ["firstName", "resetUrl", "expiresIn", "supportEmail", "userEmail"],
+  "variables": [
+    "firstName",
+    "resetUrl",
+    "expiresIn",
+    "supportEmail",
+    "userEmail"
+  ],
   "category": "authentication",
   "active": true
-};
+}

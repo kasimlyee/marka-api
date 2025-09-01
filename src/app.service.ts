@@ -68,7 +68,7 @@ export class AppService {
     const { messageId, success } = await this.emailService.sendEmail({
       to: 'user@example.com',
       subject: 'Welcome!',
-      template: 'welcome',
+      template: 'welcome-user',
       templateData: {
         name: 'John Doe',
         verificationUrl: 'https://marka.ug/verify/123',

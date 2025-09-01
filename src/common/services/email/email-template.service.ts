@@ -15,6 +15,14 @@ export class EmailTemplateService {
 
   constructor(private readonly configService: ConfigService) {
     this.templatesPath = this.configService.get('email.templates.path')!;
+
+    if (!this.templatesPath) {
+      this.logger.warn(
+        'EMAIL_TEMPLATES_PATH not configured, using default path',
+      );
+      this.templatesPath = './src/templates/email'; // Update default path too
+    }
+
     this.registerHelpers();
     this.loadTemplates();
   }

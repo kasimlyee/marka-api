@@ -1,16 +1,16 @@
-const subscriptionRenewalConfig = {
+{
   "name": "Subscription Renewal Notice",
   "subject": "🔔 Subscription Renewal Notice - {{daysUntilExpiry}} Days Remaining",
   "variables": [
-    "firstName", 
-    "subscriptionPlan", 
-    "expiryDate", 
-    "amount", 
+    "firstName",
+    "subscriptionPlan",
+    "expiryDate",
+    "amount",
     "currency",
-    "daysUntilExpiry", 
-    "renewUrl", 
+    "daysUntilExpiry",
+    "renewUrl",
     "supportEmail"
   ],
   "category": "subscription_renewal",
   "active": true
-};
+}

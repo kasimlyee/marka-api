@@ -1,20 +1,20 @@
-const assessmentSubmittedConfig = {
+{
   "name": "Assessment Submitted",
   "subject": "✅ Assessment Submitted - {{studentName}} ({{subjectName}})",
   "variables": [
-    "teacherName", 
-    "studentName", 
-    "subjectName", 
+    "teacherName",
+    "studentName",
+    "subjectName",
     "assessmentType",
-    "examLevel", 
-    "caScore", 
-    "examScore", 
-    "totalScore", 
+    "examLevel",
+    "caScore",
+    "examScore",
+    "totalScore",
     "grade",
-    "schoolName", 
-    "dashboardUrl", 
+    "schoolName",
+    "dashboardUrl",
     "supportEmail"
   ],
   "category": "assessment",
   "active": true
-};
+}
