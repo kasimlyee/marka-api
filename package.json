@@ -28,6 +28,7 @@
     "@aws-sdk/client-s3": "^3.878.0",
     "@eslint/js": "^9.34.0",
     "@nestjs-modules/ioredis": "^2.0.2",
+    "@nestjs/axios": "^2.0.0",
     "@nestjs/bull": "^0.6.3",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",

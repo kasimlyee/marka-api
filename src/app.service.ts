@@ -1,10 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EmailService } from './common/services/email/email.service';
+import { SmsService } from './common/services/sms/sms.service';
 
 @Injectable()
 export class AppService {
   private readonly logger = new Logger(AppService.name);
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly smsService: SmsService,
+  ) {}
   getHello(): string {
     return `
       <!DOCTYPE html>
@@ -77,5 +81,21 @@ export class AppService {
 
     this.logger.log(`Email sent: ${messageId}, Success: ${success}`);
     return success;
+  }
+
+  async testSms(): Promise<boolean> {
+    try {
+      const result = await this.smsService.sendSms({
+        number: '256701521269',
+        message: 'This is a test SMS from Marka API. Service is working!',
+        senderid: 'MarkaTest',
+      });
+
+      this.logger.log(`SMS test sent successfully: ${JSON.stringify(result)}`);
+      return true;
+    } catch (error) {
+      this.logger.error(`SMS test failed: ${error.message}`);
+      return false;
+    }
   }
 }
