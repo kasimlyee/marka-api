@@ -7,9 +7,10 @@ import {
   Param,
   Delete,
   UseGuards,
-  Request,
+  UploadedFile,
   Query,
-  NotFoundException
+  NotFoundException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -19,6 +20,8 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
+  ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -27,11 +30,16 @@ import { Tenant, Role } from '@marka/common';
 import { Student } from './student.entity';
 import { TenantGuard } from '../tenants/guard/tenant.guard';
 import { SchoolsService } from '../schools/schools.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { SkipValidation } from '@marka/common/decorators/skip-validation.decorator';
 
 @ApiTags('students')
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly studentsService: StudentsService, private readonly schoolsService: SchoolsService) {}
+  constructor(
+    private readonly studentsService: StudentsService,
+    private readonly schoolsService: SchoolsService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
@@ -64,6 +72,36 @@ export class StudentsController {
     @Query('schoolId') schoolId?: string,
   ): Promise<Student[]> {
     return this.studentsService.findAll(tenant.id, schoolId);
+  }
+
+  @Post(':id/photo')
+  @UseInterceptors(FileInterceptor('photo'))
+  @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.TEACHER)
+  @SkipValidation()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Upload student photo' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Student photo image file',
+    schema: {
+      type: 'object',
+      properties: {
+        photo: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Photo uploaded successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid file format' })
+  @ApiResponse({ status: 404, description: 'Student not found' })
+  async uploadPhoto(
+    @Param('id') studentId: string,
+    @UploadedFile() photo: Express.Multer.File,
+  ) {
+    return this.studentsService.uploadStudentPhoto(studentId, photo);
   }
 
   @Get(':id')

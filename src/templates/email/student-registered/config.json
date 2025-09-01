@@ -1,0 +1,19 @@
+{
+  "name": "Student Registered",
+  "subject": "📚 New Student Registered - {{studentName}}",
+  "variables": [
+    "teacherName",
+    "studentName",
+    "studentLIN",
+    "class",
+    "stream",
+    "schoolName",
+    "admissionDate",
+    "parentName",
+    "parentEmail",
+    "dashboardUrl",
+    "supportEmail"
+  ],
+  "category": "student_management",
+  "active": true
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Welcome Email",
+  "subject": "Welcome to Our Platform, {{name}}!",
+  "category": "authentication",
+  "active": true,
+  "variables": ["name", "email", "loginUrl"]
+}

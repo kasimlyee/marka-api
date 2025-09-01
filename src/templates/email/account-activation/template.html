@@ -1,0 +1,126 @@
+const accountActivationHTML = `
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Activate Your Account</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .logo {
+                font-size: 28px;
+                font-weight: bold;
+                color: #667eea;
+                margin-bottom: 10px;
+            }
+            .activation-box {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 30px;
+                text-align: center;
+                border-radius: 10px;
+                margin: 20px 0;
+            }
+            .activation-button {
+                display: inline-block;
+                padding: 15px 30px;
+                background-color: white;
+                color: #667eea;
+                text-decoration: none;
+                border-radius: 25px;
+                font-weight: bold;
+                margin: 20px 0;
+            }
+            .warning {
+                background-color: #fff3cd;
+                border: 1px solid #ffeaa7;
+                color: #856404;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 20px 0;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 30px;
+                font-size: 14px;
+                color: #666;
+                border-top: 1px solid #eee;
+                padding-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="logo">📊 MARKA</div>
+                <p>UNEB Report Card System</p>
+            </div>
+
+            <h2>Account Activation Required</h2>
+
+            <p>Hello {{firstName}},</p>
+
+            <p>
+                Welcome to Marka! To complete your registration and access your
+                account, please activate your account by clicking the button
+                below.
+            </p>
+
+            <div class="activation-box">
+                <h3>🔐 Activate Your Account</h3>
+                <p>
+                    Click the button below to verify your email address and
+                    activate your Marka account.
+                </p>
+                <a href="{{activationUrl}}" class="activation-button"
+                    >Activate Account</a
+                >
+            </div>
+
+            <div class="warning">
+                <strong>⏰ Important:</strong> This activation link will expire
+                in {{expiresIn}} hours for security reasons. Please activate
+                your account as soon as possible.
+            </div>
+
+            <p>
+                <strong>Having trouble clicking the button?</strong> Copy and
+                paste the following link into your browser:
+            </p>
+            <p style="word-break: break-all; color: #666; font-size: 14px">
+                {{activationUrl}}
+            </p>
+
+            <div class="footer">
+                <p>
+                    If you didn't create this account, please ignore this email.
+                </p>
+                <p>
+                    Need help? Contact us at
+                    <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>
+                </p>
+                <p>&copy; 2025 Marka. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+</html>
+`;

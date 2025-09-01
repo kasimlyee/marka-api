@@ -8,12 +8,14 @@ import { Repository } from 'typeorm';
 import { School } from './school.entity';
 import { CreateSchoolDto } from './dto/create-school.dto';
 import { UpdateSchoolDto } from './dto/update-school.dto';
+import { StoreService } from '../store/store.service';
 
 @Injectable()
 export class SchoolsService {
   constructor(
     @InjectRepository(School)
     private readonly schoolRepository: Repository<School>,
+    private readonly storeService: StoreService,
   ) {}
 
   async create(
@@ -34,6 +36,8 @@ export class SchoolsService {
       tenantId,
     });
     return this.schoolRepository.save(school);
+
+    
   }
 
   async findAll(tenantId: string): Promise<School[]> {
@@ -73,5 +77,32 @@ export class SchoolsService {
       throw new NotFoundException(`School for tenant ${tenantId} not found`);
     }
     return school;
+  }
+
+  async uploadSchoolLogo(schoolId: string, file: Express.Multer.File) {
+    const school = await this.schoolRepository.findOne({
+      where: { id: schoolId },
+    });
+
+    if (!school) {
+      throw new NotFoundException(`School with ID ${schoolId} not found`);
+    }
+
+    //upload to cloudinary
+    const result = await this.storeService.uploadFile(file, {
+      folder: 'school-logos',
+      fileName: `school-${schoolId}`,
+      contentType: 'image/jpeg',
+      transformations: [
+        { width: 300, height: 300, crop: 'fill' },
+        { quality: 'auto:good' },
+      ],
+    });
+
+    //store the url in the school database
+    school.logoUrl = result.url;
+    await this.schoolRepository.save(school);
+
+    return { url: result.url };
   }
 }

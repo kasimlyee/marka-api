@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Welcome to Marka</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748; }
+    .container { max-width: 600px; margin: 0 auto; padding: 0; }
+    .header { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); padding: 40px; text-align: center; color: white; }
+    .content { padding: 40px; background: #ffffff; }
+    .footer { padding: 30px; text-align: center; color: #718096; font-size: 14px; background: #f7fafc; }
+    .button { 
+      display: inline-block; 
+      padding: 12px 30px; 
+      background: #4f46e5; 
+      color: white; 
+      text-decoration: none; 
+      border-radius: 5px; 
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Welcome to Marka!</h1>
+      <p>UNEB-Compliant Report Card System</p>
+    </div>
+    <div class="content">
+      <p>Dear {{userName}},</p>
+
+      <p>Welcome to Marka! We're excited to have you on board as part of Uganda's education transformation journey.</p>
+
+      <p>With your account, you can now:</p>
+      <ul>
+        <li>Generate UNEB-compliant report cards</li>
+        <li>Manage student assessments and grades</li>
+        <li>Track academic performance over time</li>
+        <li>Access advanced analytics and reporting</li>
+      </ul>
+
+      <p style="text-align: center;">
+        <a href="{{dashboardUrl}}" class="button">Go to Dashboard</a>
+      </p>
+
+      <p>If you have any questions or need assistance, please don't hesitate to contact our support team at support@marka.ug or call us at +256-701521269.</p>
+
+      <p>Best regards,<br><strong>The Marka Team</strong></p>
+    </div>
+    <div class="footer">
+      <p>&copy; {{formatDate now}} Marka</p>
+      <p>Kampala, Uganda | support@marka.ug | +256-701521269</p>
+    </div>
+  </div>
+</body>
+</html>

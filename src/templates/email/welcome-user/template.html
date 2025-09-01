@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Welcome to Marka</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                padding: 20px 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 10px 10px 0 0;
+                margin: -20px -20px 30px -20px;
+            }
+            .logo {
+                font-size: 32px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .welcome-text {
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #333;
+            }
+            .role-badge {
+                display: inline-block;
+                padding: 5px 15px;
+                background-color: #e3f2fd;
+                color: #1976d2;
+                border-radius: 20px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .cta-button {
+                display: inline-block;
+                padding: 12px 30px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 25px;
+                font-weight: bold;
+                margin: 20px 0;
+            }
+            .features {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 8px;
+                margin: 20px 0;
+            }
+            .feature-item {
+                margin: 10px 0;
+                padding-left: 20px;
+                position: relative;
+            }
+            .feature-item:before {
+                content: '✓';
+                position: absolute;
+                left: 0;
+                color: #4caf50;
+                font-weight: bold;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+                font-size: 14px;
+                color: #666;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="logo">📊 MARKA</div>
+                <p>UNEB-Compliant Report Card System</p>
+            </div>
+
+            <h2 class="welcome-text">Welcome, {{firstName}}!</h2>
+
+            <p>
+                Thank you for joining Marka, Uganda's premier UNEB-compliant
+                report card generation system. We're excited to have you on
+                board!
+            </p>
+
+            <div
+                style="
+                    background-color: #f0f8ff;
+                    padding: 15px;
+                    border-left: 4px solid #2196f3;
+                    margin: 20px 0;
+                "
+            >
+                <strong>Account Details:</strong><br />
+                <strong>Name:</strong> {{firstName}} {{lastName}}<br />
+                <strong>Email:</strong> {{email}}<br />
+                <strong>Role:</strong> <span class="role-badge">{{role}}</span
+                ><br />
+                {{#if schoolName}}<strong>School:</strong> {{schoolName}}{{/if}}
+            </div>
+
+            <div class="features">
+                <h3>🎯 What you can do with Marka:</h3>
+                <div class="feature-item">
+                    Generate UNEB-compliant report cards for PLE, UCE, and UACE
+                </div>
+                <div class="feature-item">
+                    Manage student assessments and grades
+                </div>
+                <div class="feature-item">
+                    Track student performance analytics
+                </div>
+                <div class="feature-item">Automated grade calculations</div>
+                <div class="feature-item">Secure multi-tenant architecture</div>
+                <div class="feature-item">
+                    Real-time notifications and alerts
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0">
+                <a href="{{loginUrl}}" class="cta-button"
+                    >Access Your Dashboard</a
+                >
+            </div>
+
+            <p><strong>Next Steps:</strong></p>
+            <ol>
+                <li>Click the button above to access your dashboard</li>
+                <li>Complete your profile setup</li>
+                <li>
+                    {{#if (eq role 'admin')}}Set up your school
+                    information{{/if}} {{#if (eq role 'teacher')}}Start adding
+                    student assessments{{/if}} {{#if (eq role 'parent')}}View
+                    your child's progress{{/if}}
+                </li>
+            </ol>
+
+            <div class="footer">
+                <p>
+                    Need help? Contact our support team at
+                    <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>
+                </p>
+                <p>&copy; 2025 Marka. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+</html>

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Student } from './student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { StoreService } from '../store/store.service';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -11,9 +12,13 @@ export class StudentsService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
+    private readonly storeService: StoreService,
   ) {}
 
-  async create(createStudentDto: CreateStudentDto, tenantId: string): Promise<Student> {
+  async create(
+    createStudentDto: CreateStudentDto,
+    tenantId: string,
+  ): Promise<Student> {
     // Generate LIN if not provided
     if (!createStudentDto.lin) {
       createStudentDto.lin = this.generateLIN();
@@ -78,6 +83,32 @@ export class StudentsService {
   async remove(id: string, tenantId: string): Promise<void> {
     const student = await this.findOne(id, tenantId);
     await this.studentRepository.remove(student);
+  }
+
+  async uploadStudentPhoto(studentId: string, file: Express.Multer.File) {
+    const student = await this.studentRepository.findOne({
+      where: { id: studentId },
+    });
+
+    if (!student) {
+      throw new NotFoundException(`Student with ID ${studentId} not found`);
+    }
+
+    // Upload to Cloudinary
+    const result = await this.storeService.uploadFile(file, {
+      folder: 'student-photos',
+      fileName: `student-${studentId}`,
+      contentType: 'image/jpeg',
+      transformations: [
+        { width: 500, height: 500, crop: 'fill' },
+        { quality: 'auto:best' },
+      ],
+    });
+
+    // Store the URL in the student database
+    student.photoUrl = result.url;
+    await this.studentRepository.save(student);
+    return { url: result.url };
   }
 
   private generateLIN(): string {

@@ -21,6 +21,7 @@ import { RegisterResponseDto } from './dto/register-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { UserResponseDto } from '../users/dto/user-response.dto';
 import { TenantResponseDto } from '../tenants/dto/tenant-response.dto';
+import { UserStatus } from '../users/enums/user-status.enum';
 
 @Injectable()
 export class AuthService {
@@ -64,6 +65,17 @@ export class AuthService {
     if (tenantId && user.tenantId !== tenantId) {
       throw new UnauthorizedException('User does not belong to this tenant');
     }
+    // Check if user is active
+    if (!user.isActive()) {
+      throw new ConflictException(
+        'Please verify your email and phone before logging in',
+      );
+    }
+
+    // Update last login
+    user.lastLoginAt = new Date();
+    //user.lastLoginIp = loginDto.ip; Not provided in the DTO, you might need to pass it from the controller
+    await this.userRepository.save(user);
 
     const payload: JwtPayload = {
       sub: user.id,
@@ -138,6 +150,7 @@ export class AuthService {
       const tenantResponse = plainToInstance(TenantResponseDto, tenant, {
         excludeExtraneousValues: true,
       });
+
       return {
         user: userResponse,
         tenant: tenantResponse,
@@ -206,5 +219,40 @@ export class AuthService {
   async logout(userId: string): Promise<void> {
     // Clear refresh token hash
     await this.usersService.update(userId, { refreshTokenHash: undefined });
+  }
+
+  async markEmailAsVerified(email: string): Promise<void> {
+    await this.userRepository.update(
+      { email: email.toLowerCase() },
+      {
+        isEmailVerified: true,
+        emailVerifiedAt: new Date(),
+        status: UserStatus.ACTIVE,
+      },
+    );
+  }
+
+  async markPhoneAsVerified(phone: string): Promise<void> {
+    await this.userRepository.update(
+      { phone },
+      {
+        isPhoneVerified: true,
+        phoneVerifiedAt: new Date(),
+        status: UserStatus.ACTIVE,
+      },
+    );
+  }
+
+  async initiateTwoFactor(
+    userId: string,
+  ): Promise<{ secret: string; qrCode: string }> {
+    // Implement two-factor authentication setup
+    // This would generate a secret and QR code for the authenticator app
+    throw new Error('Two-factor authentication not implemented');
+  }
+
+  async verifyTwoFactor(userId: string, token: string): Promise<boolean> {
+    // Implement two-factor token verification
+    throw new Error('Two-factor authentication not implemented');
   }
 }

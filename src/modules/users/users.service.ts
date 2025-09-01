@@ -35,7 +35,9 @@ export class UsersService {
       tenantId,
     });
 
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+
+    return user;
   }
 
   async findAll(tenantId: string): Promise<User[]> {

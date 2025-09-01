@@ -1,0 +1,220 @@
+const assessmentSubmittedHTML = `
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Assessment Submitted</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+            }
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+                color: white;
+                padding: 30px;
+                margin: -30px -30px 30px -30px;
+                border-radius: 10px 10px 0 0;
+            }
+            .logo {
+                font-size: 28px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .assessment-details {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+                border-left: 4px solid #9c27b0;
+            }
+            .score-display {
+                text-align: center;
+                background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+                color: white;
+                padding: 20px;
+                border-radius: 10px;
+                margin: 20px 0;
+            }
+            .grade-badge {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #1976d2;
+                color: white;
+                border-radius: 25px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+            .view-button {
+                display: inline-block;
+                padding: 12px 30px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                text-decoration: none;
+                border-radius: 25px;
+                font-weight: bold;
+                margin: 20px 0;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 30px;
+                font-size: 14px;
+                color: #666;
+                border-top: 1px solid #eee;
+                padding-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="logo">📊 MARKA</div>
+                <h2>✅ Assessment Submitted</h2>
+                <p>UNEB-compliant grading applied</p>
+            </div>
+
+            <p>Dear {{teacherName}},</p>
+
+            <p>
+                An assessment has been successfully submitted and graded using
+                UNEB standards.
+            </p>
+
+            <div class="assessment-details">
+                <h3>📋 Assessment Details</h3>
+                <table style="width: 100%; border-collapse: collapse">
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <td style="padding: 10px 0">
+                            <strong>Student:</strong>
+                        </td>
+                        <td style="text-align: right">{{studentName}}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <td style="padding: 10px 0">
+                            <strong>Subject:</strong>
+                        </td>
+                        <td style="text-align: right">{{subjectName}}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <td style="padding: 10px 0">
+                            <strong>Assessment Type:</strong>
+                        </td>
+                        <td
+                            style="
+                                text-align: right;
+                                text-transform: capitalize;
+                            "
+                        >
+                            {{assessmentType}}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd">
+                        <td style="padding: 10px 0">
+                            <strong>Exam Level:</strong>
+                        </td>
+                        <td
+                            style="text-align: right; text-transform: uppercase"
+                        >
+                            {{examLevel}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 0">
+                            <strong>School:</strong>
+                        </td>
+                        <td style="text-align: right">{{schoolName}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="score-display">
+                <h3>🎯 Scores & Grade</h3>
+                <table style="width: 100%; color: white; margin: 10px 0">
+                    {{#if caScore}}
+                    <tr>
+                        <td style="padding: 5px 0">Continuous Assessment:</td>
+                        <td style="text-align: right; font-weight: bold">
+                            {{caScore}}%
+                        </td>
+                    </tr>
+                    {{/if}} {{#if examScore}}
+                    <tr>
+                        <td style="padding: 5px 0">Final Exam:</td>
+                        <td style="text-align: right; font-weight: bold">
+                            {{examScore}}%
+                        </td>
+                    </tr>
+                    {{/if}}
+                    <tr style="border-top: 2px solid rgba(255, 255, 255, 0.3)">
+                        <td style="padding: 10px 0; font-size: 18px">
+                            <strong>Total Score:</strong>
+                        </td>
+                        <td
+                            style="
+                                text-align: right;
+                                font-size: 24px;
+                                font-weight: bold;
+                            "
+                        >
+                            {{totalScore}}%
+                        </td>
+                    </tr>
+                </table>
+                <div style="margin-top: 15px">
+                    <span class="grade-badge">Grade: {{grade}}</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0">
+                <a href="{{dashboardUrl}}" class="view-button"
+                    >📊 View Full Assessment</a
+                >
+            </div>
+
+            <div
+                style="
+                    background-color: #e3f2fd;
+                    padding: 20px;
+                    border-radius: 10px;
+                    margin: 20px 0;
+                "
+            >
+                <h3>🏆 UNEB Grading Applied</h3>
+                <p>
+                    This assessment has been automatically graded according to
+                    UNEB standards:
+                </p>
+                <ul>
+                    <li>✓ Grade boundaries applied correctly</li>
+                    <li>✓ Weighted scoring calculated</li>
+                    <li>✓ Performance indicators assigned</li>
+                    <li>✓ Ready for report card generation</li>
+                </ul>
+            </div>
+
+            <div class="footer">
+                <p>Keep track of all assessments in your Marka dashboard.</p>
+                <p>
+                    Need help? Contact us at
+                    <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>
+                </p>
+                <p>&copy; 2025 Marka. All rights reserved.</p>
+            </div>
+        </div>
+    </body>
+</html>
+`;

@@ -1,0 +1,15 @@
+ {
+  "name": "Welcome User",
+  "subject": "Welcome to Marka - {{firstName}}!",
+  "variables": [
+    "firstName", 
+    "lastName", 
+    "email", 
+    "role", 
+    "schoolName", 
+    "loginUrl",
+    "supportEmail"
+  ],
+  "category": "onboarding",
+  "active": true
+}

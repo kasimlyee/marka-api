@@ -1,0 +1,16 @@
+{
+  "name": "Subscription Renewal Notice",
+  "subject": "🔔 Subscription Renewal Notice - {{daysUntilExpiry}} Days Remaining",
+  "variables": [
+    "firstName",
+    "subscriptionPlan",
+    "expiryDate",
+    "amount",
+    "currency",
+    "daysUntilExpiry",
+    "renewUrl",
+    "supportEmail"
+  ],
+  "category": "subscription_renewal",
+  "active": true
+}

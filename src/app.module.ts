@@ -22,11 +22,14 @@ import { GradingModule } from './modules/grading/grading.module';
 import { ImportModule } from './modules/import/import.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
-import { NotificationsModule } from './modules/notifications/notifications.module';
+
 import { AuditModule } from './modules/audit/audit.module';
 import { AssessmentsModule } from './modules/assessments/assessments.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { StoreModule } from './modules/store/store.module';
+import { EmailModule } from './common/services/email/email.module';
+import emailConfig from './config/email.config';
 
 @Module({
   imports: [
@@ -39,6 +42,7 @@ import { AppService } from './app.service';
         jwtConfig,
         paystackConfig,
         storageConfig,
+        emailConfig,
       ],
       envFilePath: ['.env'],
     }),
@@ -101,9 +105,11 @@ import { AppService } from './app.service';
     ImportModule,
     PaymentsModule,
     SubscriptionsModule,
-    NotificationsModule,
     AuditModule,
     AssessmentsModule,
+    StoreModule,
+    //services
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
