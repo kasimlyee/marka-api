@@ -32,6 +32,7 @@ export class PdfGeneratorService {
 
   private async initializeBrowser(): Promise<void> {
     try {
+      /**
       this.browser = await puppeteer.launch({
         headless: true,
         args: [
@@ -44,7 +45,7 @@ export class PdfGeneratorService {
           '--single-process',
           '--disable-gpu',
         ],
-      });
+      });*/
 
       this.logger.log('PDF generator browser initialized');
     } catch (error) {
