@@ -18,4 +18,13 @@ export class AppController {
     }
     return 'Email sending failed';
   }
+
+  @Get('test-sms')
+  async testSms(): Promise<string> {
+    const success = await this.appService.testSms();
+    if (success) {
+      return 'Sms sent successfully';
+    }
+    return 'Sms sending failed';
+  }
 }
