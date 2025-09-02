@@ -22,9 +22,10 @@ export class SmsService implements OnModuleInit {
     private readonly configService: ConfigService,
   ) {
     this.config = this.loadConfig();
-    this.baseUrl = this.config.isSandbox
-      ? 'http://sandbox.egosms.co/api/v1/json/'
-      : 'https://www.egosms.co/api/v1/json/';
+    //this.baseUrl = this.config.isSandbox
+    //  ? 'http://sandbox.egosms.co/api/v1/json/'
+    // : 'https://www.egosms.co/api/v1/json/';
+    this.baseUrl = 'http://www.egosms.co/api/v1/json/';
   }
 
   onModuleInit() {
@@ -42,7 +43,7 @@ export class SmsService implements OnModuleInit {
         'SMS_DEFAULT_PRIORITY',
         2,
       ),
-      isSandbox: this.configService.get<boolean>('SMS_SANDBOX_MODE', false),
+      isSandbox: this.configService.get<boolean>('SMS_SANDBOX_MODE', true),
       timeout: this.configService.get<number>('SMS_TIMEOUT', 10000),
       maxRetries: this.configService.get<number>('SMS_MAX_RETRIES', 3),
       retryDelay: this.configService.get<number>('SMS_RETRY_DELAY', 1000),
@@ -59,7 +60,7 @@ export class SmsService implements OnModuleInit {
       msgdata: [
         {
           number: smsData.number,
-          message: encodeURIComponent(smsData.message),
+          message: smsData.message,
           senderid: encodeURIComponent(
             smsData.senderid || this.config.defaultSenderId,
           ),
@@ -70,7 +71,7 @@ export class SmsService implements OnModuleInit {
         },
       ],
     };
-    console.log(payload);
+    //console.log(payload, this.baseUrl);
     return this.sendRequest(payload);
   }
 
@@ -145,6 +146,7 @@ export class SmsService implements OnModuleInit {
       );
     } else {
       const errorResponse = response as SmsErrorResponseDto;
+      // console.log(errorResponse);
       this.logger.error(`SMS sending failed: ${errorResponse.Message}`);
       throw new Error(`SMS API Error: ${errorResponse.Message}`);
     }

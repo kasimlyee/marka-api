@@ -99,7 +99,7 @@ import smsConfig from './config/sms.config';
         password: configService.get('SMS_PASSWORD') ?? '',
         defaultSenderId: configService.get('SMS_DEFAULT_SENDER_ID') ?? '',
         defaultPriority: configService.get('SMS_DEFAULT_PRIORITY', 2),
-        isSandbox: configService.get('SMS_SANDBOX_MODE', false),
+        isSandbox: configService.get('SMS_SANDBOX_MODE', true),
         timeout: configService.get('SMS_TIMEOUT', 10000),
         maxRetries: configService.get('SMS_MAX_RETRIES', 3),
         retryDelay: configService.get('SMS_RETRY_DELAY', 1000),
