@@ -30,6 +30,7 @@ import { AppService } from './app.service';
 import { StoreModule } from './modules/store/store.module';
 import { EmailModule } from './common/services/email/email.module';
 import { SmsModule } from './common/services/sms/sms.module';
+import { ReportCardsModule } from './modules/report-cards/report-cards.module';
 import emailConfig from './config/email.config';
 import smsConfig from './config/sms.config';
 
@@ -126,6 +127,7 @@ import smsConfig from './config/sms.config';
     StoreModule,
     //services
     EmailModule,
+    ReportCardsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
