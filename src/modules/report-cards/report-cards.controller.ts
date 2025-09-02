@@ -3,172 +3,208 @@ import {
   Get,
   Post,
   Body,
+  Patch,
   Param,
+  Delete,
   Query,
   UseGuards,
-  Req,
-  Res,
+  Request,
+  Response,
   ParseUUIDPipe,
-  ParseIntPipe,
   HttpStatus,
   HttpCode,
   StreamableFile,
 } from '@nestjs/common';
-import type { Response, Request } from 'express';
-import { createReadStream } from 'fs';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { Role as UserRole } from '../../common/enums/role.enum';
 import { ReportCardService } from './report-cards.service';
-import {
-  GenerateReportCardDto,
-  BulkGenerateReportCardDto,
-} from './dto/generate-report-card.dto';
-import { ReportCardStatus } from './entities/report-card.entity';
-import { ExamLevel } from './entities/report-card-template.entity';
+import { CreateReportCardDto } from './dto/create-report-card.dto';
+import { UpdateReportCardDto } from './dto/update-report-card.dto';
+import { GenerateReportCardDto } from './dto/generate-report-card.dto';
+import { CreateTemplateDto } from './dto/create-report-card-template.dto';
+import { UpdateTemplateDto } from './dto/update-report-card-template.dto';
+import { ReportCard, ReportCardStatus } from './entities/report-card.entity';
+import { ReportCardTemplate } from './entities/report-card-template.entity';
+import { ExamLevel } from '../assessments/assessment.entity';
+import * as fs from 'fs';
+import type { Response as ExpressResponse } from 'express';
+import * as path from 'path';
+import { Tenant } from '../../common/decorators/tenant.decorator';
 import { TenantGuard } from '../tenants/guard/tenant.guard';
-import { Role } from '@marka/common/index';
 
+@ApiTags('Report Cards')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard, TenantGuard)
 @Controller('report-cards')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ReportCardController {
   constructor(private readonly reportCardService: ReportCardService) {}
 
-  @Post('generate')
-  @UseGuards(RolesGuard, TenantGuard)
-  @Roles(Role.ADMIN, Role.TEACHER)
-  @HttpCode(HttpStatus.CREATED)
-  async generate(
-    @Body() generateDto: GenerateReportCardDto,
-    @Req() req: Request,
-  ) {
-    const { user } = req as any;
-    return {
-      success: true,
-      message: 'Report card generation started',
-      data: await this.reportCardService.generateReportCard(
-        generateDto,
-        user.id,
-      ),
-    };
+  @Post()
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({ summary: 'Create a new report card' })
+  @ApiResponse({ status: 201, description: 'Report card successfully created' })
+  async create(
+    @Body() createDto: CreateReportCardDto,
+    @Tenant() tenant,
+  ): Promise<ReportCard> {
+    return this.reportCardService.create(createDto, tenant.id);
   }
 
   @Post('generate/bulk')
-  @UseGuards(RolesGuard, TenantGuard)
-  @Roles(Role.ADMIN, Role.TEACHER)
-  @HttpCode(HttpStatus.CREATED)
-  async bulkGenerate(
-    @Body() bulkGenerateDto: BulkGenerateReportCardDto,
-    @Req() req: Request,
-  ) {
-    const { user } = req as any;
-    return {
-      success: true,
-      message: 'Bulk report card generation started',
-      data: await this.reportCardService.bulkGenerateReportCards(
-        bulkGenerateDto,
-        user.id,
-      ),
-    };
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({ summary: 'Generate report cards in bulk' })
+  @ApiResponse({ status: 201, description: 'Bulk generation initiated' })
+  async generateBulk(
+    @Body() generateDto: GenerateReportCardDto,
+    @Tenant() tenant,
+  ): Promise<{ jobIds: string[] }> {
+    return this.reportCardService.generateBulk(generateDto, tenant.id);
+  }
+
+  @Post(':id/generate')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({ summary: 'Generate PDF for a report card' })
+  @ApiResponse({ status: 200, description: 'PDF generated successfully' })
+  async generatePdf(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ReportCard> {
+    return this.reportCardService.generatePdf(id);
   }
 
   @Get()
-  @Roles(Role.ADMIN, Role.TEACHER, Role.PARENT)
+  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.PARENT)
+  @ApiOperation({ summary: 'Get all report cards' })
+  @ApiResponse({ status: 200, description: 'Return all report cards' })
+  @ApiQuery({ name: 'status', required: false, enum: ReportCardStatus })
+  @ApiQuery({ name: 'examLevel', required: false, enum: ExamLevel })
+  @ApiQuery({ name: 'term', required: false, type: Number })
+  @ApiQuery({ name: 'year', required: false, type: Number })
+  @ApiQuery({ name: 'studentId', required: false, type: String })
   async findAll(
-    @Req() req: Request,
-    @Query('studentId') studentId?: string,
-    @Query('examLevel') examLevel?: ExamLevel,
-    @Query('academicYear') academicYear?: string,
-    @Query('term') term?: string,
-    @Query('status') status?: ReportCardStatus,
-    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
-    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 20,
-  ) {
-    const { user } = req as any;
-
-    const filters: any = {};
-
-    // Role-based filtering
-    if (user.role === 'parent') {
-      // Parents can only see their children's report cards
-      // You'll need to implement parent-student relationship logic
-      filters.parentId = user.id;
-    } else {
-      filters.schoolId = user.schoolId;
-    }
-
-    if (studentId) filters.studentId = studentId;
-    if (examLevel) filters.examLevel = examLevel;
-    if (academicYear) filters.academicYear = academicYear;
-    if (term) filters.term = term;
-    if (status) filters.status = status;
-
-    const result = await this.reportCardService.getReportCards(
-      filters,
-      page,
-      limit,
-    );
-
-    return {
-      success: true,
-      message: 'Report cards retrieved successfully',
-      data: result.items,
-      pagination: {
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        totalPages: result.totalPages,
-      },
+    @Query() query: any,
+    @Request() req: any,
+  ): Promise<ReportCard[]> {
+    const filters = {
+      status: query.status,
+      examLevel: query.examLevel,
+      term: query.term ? parseInt(query.term) : undefined,
+      year: query.year ? parseInt(query.year) : undefined,
+      studentId: query.studentId,
     };
+
+    return this.reportCardService.findAll(req.user.schoolId, filters);
+  }
+
+  @Get(':id')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.PARENT)
+  @ApiOperation({ summary: 'Get a report card by ID' })
+  @ApiResponse({ status: 200, description: 'Return the report card' })
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Request() req: any,
+  ): Promise<ReportCard> {
+    return this.reportCardService.findOne(id, req.user.schoolId);
+  }
+
+  @Patch(':id')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({ summary: 'Update a report card' })
+  @ApiResponse({ status: 200, description: 'Report card successfully updated' })
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateDto: UpdateReportCardDto,
+    @Tenant() tenant,
+  ): Promise<ReportCard> {
+    return this.reportCardService.update(id, updateDto, tenant.id);
+  }
+
+  @Delete(':id')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({ summary: 'Delete a report card' })
+  @ApiResponse({ status: 200, description: 'Report card successfully deleted' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Request() req: any,
+  ): Promise<void> {
+    return this.reportCardService.remove(id, req.user.schoolId);
   }
 
   @Get(':id/download')
-  @UseGuards(RolesGuard, TenantGuard)
-  @Roles(Role.ADMIN, Role.TEACHER, Role.PARENT)
+  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.PARENT)
+  @ApiOperation({ summary: 'Download report card PDF' })
+  @ApiResponse({ status: 200, description: 'PDF file' })
   async download(
     @Param('id', ParseUUIDPipe) id: string,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const { filePath, fileName } =
-      await this.reportCardService.downloadReportCard(id);
+    @Request() req: any,
+    @Response({ passthrough: true }) res: ExpressResponse,
+  ): Promise<StreamableFile> {
+    const pdfPath = await this.reportCardService.downloadPdf(
+      id,
+      req.user.schoolId,
+    );
 
-    const file = createReadStream(filePath);
+    const file = fs.createReadStream(pdfPath);
+    const filename = path.basename(pdfPath);
 
     res.set({
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="${fileName}"`,
+      'Content-Disposition': `attachment; filename="${filename}"`,
     });
 
     return new StreamableFile(file);
   }
 
-  @Get('statistics')
-  @UseGuards(RolesGuard, TenantGuard)
-  @Roles(Role.ADMIN)
-  async getStatistics(
-    @Req() req: Request,
+  // Template management endpoints
+  @Post('templates')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Create a report card template' })
+  @ApiResponse({ status: 201, description: 'Template successfully created' })
+  async createTemplate(
+    @Body() createDto: CreateTemplateDto,
+    @Tenant() tenant,
+  ): Promise<ReportCardTemplate> {
+    return this.reportCardService.createTemplate(createDto, tenant.id);
+  }
+
+  @Get('templates')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({ summary: 'Get all templates' })
+  @ApiResponse({ status: 200, description: 'Return all templates' })
+  @ApiQuery({ name: 'examLevel', required: false, enum: ExamLevel })
+  async findTemplates(
+    @Tenant() tenant,
     @Query('examLevel') examLevel?: ExamLevel,
-    @Query('academicYear') academicYear?: string,
-    @Query('term') term?: string,
-  ) {
-    const { user } = req as any;
+  ): Promise<ReportCardTemplate[]> {
+    return this.reportCardService.findTemplates(tenant.id, examLevel);
+  }
 
-    // Implementation would include statistics like:
-    // - Total report cards generated
-    // - Success/failure rates
-    // - Most used templates
-    // - Generation trends
+  @Patch('templates/:id')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Update a template' })
+  @ApiResponse({ status: 200, description: 'Template successfully updated' })
+  async updateTemplate(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateDto: UpdateTemplateDto,
+  ): Promise<ReportCardTemplate> {
+    return this.reportCardService.updateTemplate(id, updateDto);
+  }
 
-    return {
-      success: true,
-      message: 'Statistics retrieved successfully',
-      data: {
-        totalReports: 0,
-        completedReports: 0,
-        failedReports: 0,
-        pendingReports: 0,
-        // Add more statistics as needed
-      },
-    };
+  @Delete('templates/:id')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Delete a template' })
+  @ApiResponse({ status: 204, description: 'Template successfully deleted' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteTemplate(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+    return this.reportCardService.deleteTemplate(id);
   }
 }

@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bull';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import {
@@ -30,7 +32,7 @@ import { AppService } from './app.service';
 import { StoreModule } from './modules/store/store.module';
 import { EmailModule } from './common/services/email/email.module';
 import { SmsModule } from './common/services/sms/sms.module';
-import { ReportCardsModule } from './modules/report-cards/report-cards.module';
+import { ReportCardModule } from './modules/report-cards/report-cards.module';
 import emailConfig from './config/email.config';
 import smsConfig from './config/sms.config';
 
@@ -68,6 +70,18 @@ import smsConfig from './config/sms.config';
           ssl: dbConfig.ssl ? { rejectUnauthorized: false } : false,
         } as TypeOrmModuleOptions;
       },
+      inject: [ConfigService],
+    }),
+    //Cache
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: async (configService: ConfigService): Promise<any> => ({
+        store: redisStore.redisStore,
+        host: configService.get('redis.host', 'localhost'),
+        port: configService.get('redis.port', 6379),
+        password: configService.get('redis.password', ''),
+        ttl: configService.get('redis.ttl', 300),
+      }),
       inject: [ConfigService],
     }),
 
@@ -127,7 +141,7 @@ import smsConfig from './config/sms.config';
     StoreModule,
     //services
     EmailModule,
-    ReportCardsModule,
+    ReportCardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

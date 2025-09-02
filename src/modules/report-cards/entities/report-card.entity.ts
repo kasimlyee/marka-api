@@ -3,25 +3,32 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
   Index,
 } from 'typeorm';
 import { Student } from '../../students/student.entity';
 import { School } from '../../schools/school.entity';
-import { ReportCardTemplate, ExamLevel } from './report-card-template.entity';
+import { User } from '../../users/user.entity';
+import { ExamLevel } from '../../assessments/assessment.entity';
+import { ReportCardTemplate } from './report-card-template.entity';
 
 export enum ReportCardStatus {
-  GENERATING = 'generating',
+  DRAFT = 'draft',
+  PROCESSING = 'processing',
   COMPLETED = 'completed',
   FAILED = 'failed',
-  ARCHIVED = 'archived',
+}
+
+export enum ReportCardType {
+  TERMLY = 'termly',
+  ANNUAL = 'annual',
+  FINAL = 'final',
 }
 
 @Entity('report_cards')
-@Index(['studentId', 'examLevel', 'academicYear', 'term'])
-@Index(['schoolId', 'status'])
-@Index(['generatedAt'])
+@Index(['studentId', 'examLevel', 'term', 'year'], { unique: true })
 export class ReportCard {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -29,60 +36,67 @@ export class ReportCard {
   @Column({ type: 'varchar', length: 255 })
   title: string;
 
-  @Column({ type: 'enum', enum: ExamLevel })
+  @Column({
+    type: 'enum',
+    enum: ReportCardType,
+    default: ReportCardType.TERMLY,
+  })
+  type: ReportCardType;
+
+  @Column({
+    type: 'enum',
+    enum: ExamLevel,
+  })
   examLevel: ExamLevel;
 
-  @Column({ type: 'varchar', length: 50 })
-  academicYear: string;
+  @Column({ type: 'int' })
+  term: number; // 1, 2, or 3
 
-  @Column({ type: 'varchar', length: 50 })
-  term: string;
-
-  @Column({ type: 'text' })
-  pdfPath: string; // Path to the generated PDF file
-
-  @Column({ type: 'text', nullable: true })
-  pdfUrl: string; // Public URL for the PDF (if using cloud storage)
+  @Column({ type: 'int' })
+  year: number;
 
   @Column({
     type: 'enum',
     enum: ReportCardStatus,
-    default: ReportCardStatus.GENERATING,
+    default: ReportCardStatus.DRAFT,
   })
   status: ReportCardStatus;
 
-  @Column({ type: 'jsonb', nullable: true })
-  reportData: Record<string, any>; // Calculated grades, statistics, etc.
+  @Column({ type: 'text', nullable: true })
+  pdfPath: string;
 
   @Column({ type: 'text', nullable: true })
-  generatedHtml: string; // Store the generated HTML for debugging
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  fileSize: string;
-
-  @Column({ type: 'text', nullable: true })
-  errorMessage: string;
+  htmlContent: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  metadata: Record<string, any>;
+  results: any; // Computed results from grading service
+
+  @Column({ type: 'jsonb', nullable: true })
+  metadata: any;
+
+  @Column({ type: 'text', nullable: true })
+  headTeacherComment: string;
+
+  @Column({ type: 'text', nullable: true })
+  classTeacherComment: string;
+
+  @Column({ type: 'date', nullable: true })
+  nextTermBegins: Date;
 
   @Column({ type: 'uuid' })
   studentId: string;
 
-  @ManyToOne(() => Student, { onDelete: 'CASCADE' })
-  student: Student;
-
   @Column({ type: 'uuid' })
   schoolId: string;
 
-  @ManyToOne(() => School, { onDelete: 'CASCADE' })
-  school: School;
+  @Column({ type: 'uuid' })
+  tenantId: string;
 
   @Column({ type: 'uuid' })
   templateId: string;
 
-  @ManyToOne(() => ReportCardTemplate, { onDelete: 'RESTRICT' })
-  template: ReportCardTemplate;
+  @Column({ type: 'uuid', nullable: true })
+  generatedBy: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -90,9 +104,19 @@ export class ReportCard {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
-  generatedAt: Date;
+  @ManyToOne(() => Student, { eager: true })
+  @JoinColumn({ name: 'studentId' })
+  student: Student;
 
-  @Column({ type: 'uuid', nullable: true })
-  generatedBy: string;
+  @ManyToOne(() => School, { eager: true })
+  @JoinColumn({ name: 'schoolId' })
+  school: School;
+
+  @ManyToOne(() => ReportCardTemplate, { eager: true })
+  @JoinColumn({ name: 'templateId' })
+  template: ReportCardTemplate;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'generatedBy' })
+  generator: User;
 }

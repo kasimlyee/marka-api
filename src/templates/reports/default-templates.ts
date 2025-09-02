@@ -2,135 +2,76 @@ export const DEFAULT_PLE_TEMPLATE = `
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>{{student.firstName}} {{student.lastName}} - PLE Report Card</title>
+    <meta charset="utf-8">
+    <title>PLE Report Card</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: white;
         }
-
-        body {
-            font-family: 'Times New Roman', serif;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #333;
+        .header { 
+            text-align: center; 
+            border-bottom: 2px solid #333; 
+            padding-bottom: 20px; 
+            margin-bottom: 20px; 
         }
-
-        .header {
-            text-align: center;
-            border-bottom: 3px solid #000;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
+        .school-logo { 
+            width: 80px; 
+            height: 80px; 
+            margin: 0 auto 10px; 
         }
-
-        .school-logo {
-            max-width: 80px;
-            max-height: 80px;
-            margin-bottom: 10px;
+        .school-name { 
+            font-size: 24px; 
+            font-weight: bold; 
+            margin-bottom: 5px; 
         }
-
-        .school-name {
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 5px;
+        .report-title { 
+            font-size: 20px; 
+            color: #666; 
         }
-
-        .school-details {
-            font-size: 11px;
-            margin-bottom: 10px;
+        .student-info { 
+            display: flex; 
+            justify-content: space-between; 
+            margin: 20px 0; 
         }
-
-        .report-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: underline;
-            margin-top: 15px;
+        .results-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0; 
         }
-
-        .student-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            padding: 15px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
+        .results-table th, 
+        .results-table td { 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+            text-align: center; 
         }
-
-        .student-details {
-            flex: 1;
+        .results-table th { 
+            background-color: #f5f5f5; 
+            font-weight: bold; 
         }
-
-        .student-photo {
-            width: 100px;
-            height: 120px;
-            border: 1px solid #000;
-            object-fit: cover;
+        .grade { 
+            font-weight: bold; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            color: white; 
         }
-
-        .grades-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 25px;
+        .summary { 
+            margin: 20px 0; 
+            padding: 15px; 
+            background-color: #f9f9f9; 
+            border-radius: 5px; 
         }
-
-        .grades-table th,
-        .grades-table td {
-            border: 1px solid #000;
-            padding: 8px;
-            text-align: center;
+        .comments { 
+            margin: 20px 0; 
         }
-
-        .grades-table th {
-            background-color: #e0e0e0;
-            font-weight: bold;
-        }
-
-        .summary-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-        }
-
-        .summary-box {
-            flex: 1;
-            margin: 0 10px;
-            padding: 15px;
-            border: 1px solid #000;
-            text-align: center;
-        }
-
-        .summary-title {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .summary-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: #0066cc;
-        }
-
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ccc;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .signature-section {
-            text-align: center;
-            width: 200px;
-        }
-
-        .signature-line {
-            border-top: 1px solid #000;
-            margin-top: 50px;
-            padding-top: 5px;
+        .footer { 
+            margin-top: 40px; 
+            border-top: 1px solid #ddd; 
+            padding-top: 20px; 
+            display: flex; 
+            justify-content: space-between; 
         }
     </style>
 </head>
@@ -140,221 +81,109 @@ export const DEFAULT_PLE_TEMPLATE = `
         <img src="{{school.logoUrl}}" alt="School Logo" class="school-logo">
         {{/if}}
         <div class="school-name">{{school.name}}</div>
-        <div class="school-details">
-            {{#if school.address}}{{school.address}}<br>{{/if}}
-            {{#if school.city}}{{school.city}}, {{/if}}{{#if school.district}}{{school.district}}<br>{{/if}}
-            {{#if school.phone}}Tel: {{school.phone}} | {{/if}}
-            {{#if school.email}}Email: {{school.email}}{{/if}}
-        </div>
         <div class="report-title">PRIMARY LEAVING EXAMINATION REPORT CARD</div>
+        <div style="margin-top: 10px;">Term {{reportCard.term}}, {{reportCard.year}}</div>
     </div>
 
     <div class="student-info">
-        <div class="student-details">
-            <p><strong>Name:</strong> {{student.firstName}} {{student.middleName}} {{student.lastName}}</p>
-            <p><strong>LIN:</strong> {{student.lin}}</p>
-            <p><strong>Class:</strong> {{student.class}} {{student.stream}}</p>
-            <p><strong>Academic Year:</strong> {{academicYear}}</p>
-            <p><strong>Term:</strong> {{term}}</p>
-            <p><strong>Date of Birth:</strong> {{formatDate student.dateOfBirth}}</p>
-            <p><strong>Gender:</strong> {{student.gender}}</p>
+        <div>
+            <strong>Student Name:</strong> {{student.firstName}} {{student.lastName}}<br>
+            <strong>Class:</strong> {{student.class}} {{student.stream}}<br>
+            {{#if student.lin}}<strong>LIN:</strong> {{student.lin}}<br>{{/if}}
         </div>
-        {{#if student.photoUrl}}
-        <img src="{{student.photoUrl}}" alt="Student Photo" class="student-photo">
-        {{/if}}
+        <div>
+            <strong>Report Date:</strong> {{formatDate generatedAt 'long'}}<br>
+            <strong>Next Term Begins:</strong> {{formatDate reportCard.nextTermBegins 'short'}}<br>
+        </div>
     </div>
 
-    <table class="grades-table">
+    <div class="section-title">Principal Subjects</div>
+    <table class="results-table">
         <thead>
             <tr>
                 <th>Subject</th>
-                <th>CA Score (40%)</th>
-                <th>Exam Score (60%)</th>
-                <th>Total Score</th>
+                <th>Score</th>
                 <th>Grade</th>
-                <th>Remarks</th>
+                <th>Points</th>
+                <th>Interpretation</th>
             </tr>
         </thead>
         <tbody>
-            {{#each assessments}}
+            {{#each results.principalSubjects}}
             <tr>
-                <td>{{subject.name}}</td>
-                <td>{{formatNumber caScore 1}}</td>
-                <td>{{formatNumber examScore 1}}</td>
-                <td>{{formatNumber (add caScore examScore) 1}}</td>
-                <td>{{grade (add caScore examScore) ../examLevel}}</td>
-                <td>{{remark}}</td>
+                <td>{{this.subjectName}}</td>
+                <td>{{this.score}}</td>
+                <td>
+                    <span class="grade" style="background-color: {{gradeColor this.grade}}">
+                        {{this.grade}}
+                    </span>
+                </td>
+                <td>{{this.points}}</td>
+                <td>{{gradeInterpretation this.grade 'UACE'}}</td>
             </tr>
             {{/each}}
         </tbody>
     </table>
 
-    <div class="summary-section">
-        <div class="summary-box">
-            <div class="summary-title">Total Subjects</div>
-            <div class="summary-value">{{statistics.totalSubjects}}</div>
-        </div>
-        <div class="summary-box">
-            <div class="summary-title">Average Score</div>
-            <div class="summary-value">{{formatNumber statistics.averageScore 1}}%</div>
-        </div>
-        <div class="summary-box">
-            <div class="summary-title">Total Marks</div>
-            <div class="summary-value">{{formatNumber statistics.totalMarks 1}}</div>
-        </div>
+    {{#if results.subsidiarySubjects}}
+    <div class="section-title">Subsidiary Subjects</div>
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Score</th>
+                <th>Grade</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each results.subsidiarySubjects}}
+            <tr>
+                <td>{{this.subjectName}}</td>
+                <td>{{this.score}}</td>
+                <td>
+                    <span class="grade" style="background-color: {{gradeColor this.grade}}">
+                        {{this.grade}}
+                    </span>
+                </td>
+                <td>{{#if this.points}}Pass{{else}}Fail{{/if}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    {{/if}}
+
+    <div class="summary">
+        <h3>Summary</h3>
+        <strong>Total Points:</strong> {{results.totalPoints}}<br>
+        <strong>Principal Subjects:</strong> {{length results.principalSubjects}}<br>
+        <strong>Subsidiary Passes:</strong> {{length results.subsidiarySubjects}}<br>
     </div>
+
+    {{#if reportCard.classTeacherComment}}
+    <div class="comments">
+        <h3>Class Teacher's Comment</h3>
+        <p>{{reportCard.classTeacherComment}}</p>
+    </div>
+    {{/if}}
+
+    {{#if reportCard.headTeacherComment}}
+    <div class="comments">
+        <h3>Head Teacher's Comment</h3>
+        <p>{{reportCard.headTeacherComment}}</p>
+    </div>
+    {{/if}}
 
     <div class="footer">
-        <div class="signature-section">
-            <div class="signature-line">Class Teacher</div>
+        <div>
+            <strong>Class Teacher</strong><br>
+            Signature: _________________
         </div>
-        <div class="signature-section">
-            <div class="signature-line">Head Teacher</div>
-        </div>
-        <div class="signature-section">
-            <div class="signature-line">Parent/Guardian</div>
+        <div>
+            <strong>Head Teacher</strong><br>
+            Signature: _________________
         </div>
     </div>
-
-    <div style="text-align: center; margin-top: 30px; font-size: 10px; color: #666;">
-        Generated on {{formatDate generatedAt}} | Powered by Marka Report System
-    </div>
-</body>
-</html>
-`;
-
-export const DEFAULT_UCE_TEMPLATE = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{{student.firstName}} {{student.lastName}} - UCE Report Card</title>
-    <style>
-        /* Similar styling to PLE template with UCE-specific modifications */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Times New Roman', serif;
-            font-size: 12px;
-            line-height: 1.4;
-            color: #333;
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 3px solid #000;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-        }
-
-        .report-title {
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: underline;
-            margin-top: 15px;
-            color: #0066cc;
-        }
-        .student-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            padding: 15px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-        }
-
-        .student-details {
-            flex: 1;
-        }
-
-        .student-photo {
-            width: 100px;
-            height: 120px;
-            border: 1px solid #000;
-            object-fit: cover;
-        }
-
-        .grades-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 25px;
-        }
-
-        .grades-table th,
-        .grades-table td {
-            border: 1px solid #000;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .grades-table th {
-            background-color: #e0e0e0;
-            font-weight: bold;
-        }
-
-        .summary-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-        }
-
-        .summary-box {
-            flex: 1;
-            margin: 0 10px;
-            padding: 15px;
-            border: 1px solid #000;
-            text-align: center;
-        }
-
-        .summary-title {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .summary-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: #0066cc;
-        }
-
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ccc;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .signature-section {
-            text-align: center;
-            width: 200px;
-        }
-
-        .signature-line {
-            border-top: 1px solid #000;
-            margin-top: 50px;
-            padding-top: 5px;
-        }
-
-        /* Include similar styling as PLE template but with UCE-specific colors and layout */
-    </style>
-</head>
-<body>
-    <!-- Similar structure to PLE template with UCE-specific content -->
-    <div class="header">
-        {{#if school.logoUrl}}
-        <img src="{{school.logoUrl}}" alt="School Logo" class="school-logo">
-        {{/if}}
-        <div class="school-name">{{school.name}}</div>
-        <div class="report-title">UGANDA CERTIFICATE OF EDUCATION REPORT CARD</div>
-    </div>
-
-    <!-- Include student info, grades table, and footer similar to PLE template -->
 </body>
 </html>
 `;

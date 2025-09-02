@@ -1,6 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateReportCardTemplateDto } from './create-report-card-template.dto';
+import { CreateTemplateDto } from './create-report-card-template.dto';
 
-export class UpdateReportCardTemplateDto extends PartialType(
-  CreateReportCardTemplateDto,
-) {}
+export class UpdateTemplateDto extends PartialType(CreateTemplateDto) {}

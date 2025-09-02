@@ -1,98 +1,64 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import {
-  ReportCardTemplate,
-  ExamLevel,
-  TemplateStatus,
-} from '../entities/report-card-template.entity';
-import {
-  DEFAULT_PLE_TEMPLATE,
-  DEFAULT_UCE_TEMPLATE,
-} from '../../../templates/reports/default-templates';
+import { Injectable, Logger } from '@nestjs/common';
+import { ReportCardTemplateRepository } from '../repository/report-card-template.repository';
+import { ExamLevel } from '../../assessments/assessment.entity';
+import { DEFAULT_PLE_TEMPLATE } from '../../../templates/reports/default-templates';
 
 @Injectable()
 export class TemplateSeederService {
+  private readonly logger = new Logger(TemplateSeederService.name);
+
   constructor(
-    @InjectRepository(ReportCardTemplate)
-    private templateRepository: Repository<ReportCardTemplate>,
+    private readonly templateRepository: ReportCardTemplateRepository,
   ) {}
 
-  async seedDefaultTemplates(schoolId: string, userId: string): Promise<void> {
-    const templates = [
-      {
-        name: 'Default PLE Template',
-        description:
-          'Standard PLE report card template compliant with UNEB requirements',
-        htmlTemplate: DEFAULT_PLE_TEMPLATE,
-        examLevel: ExamLevel.PLE,
-        status: TemplateStatus.ACTIVE,
-        isDefault: true,
-        version: '1.0',
-        schoolId,
-        createdBy: userId,
-        updatedBy: userId,
-        templateVariables: {
-          student: 'Student information object',
-          school: 'School information object',
-          assessments: 'Array of assessment objects',
-          statistics: 'Calculated statistics object',
-          academicYear: 'Academic year string',
-          term: 'Term string',
-          examLevel: 'Exam level string',
-          generatedAt: 'Generation timestamp',
-        },
-        styling: {
-          primaryColor: '#0066cc',
-          secondaryColor: '#e0e0e0',
-          fontFamily: 'Times New Roman',
-          fontSize: '12px',
-        },
-      },
-      {
-        name: 'Default UCE Template',
-        description:
-          'Standard UCE report card template compliant with UNEB requirements',
-        htmlTemplate: DEFAULT_UCE_TEMPLATE,
-        examLevel: ExamLevel.UCE,
-        status: TemplateStatus.ACTIVE,
-        isDefault: true,
-        version: '1.0',
-        schoolId,
-        createdBy: userId,
-        updatedBy: userId,
-        templateVariables: {
-          student: 'Student information object',
-          school: 'School information object',
-          assessments: 'Array of assessment objects',
-          statistics: 'Calculated statistics object',
-          academicYear: 'Academic year string',
-          term: 'Term string',
-          examLevel: 'Exam level string',
-          generatedAt: 'Generation timestamp',
-        },
-        styling: {
-          primaryColor: '#0066cc',
-          secondaryColor: '#e0e0e0',
-          fontFamily: 'Times New Roman',
-          fontSize: '12px',
-        },
-      },
-    ];
-
-    for (const templateData of templates) {
-      const existingTemplate = await this.templateRepository.findOne({
-        where: {
-          schoolId,
-          examLevel: templateData.examLevel,
+  async seedDefaultTemplates(): Promise<void> {
+    try {
+      const templates = [
+        {
+          name: 'Default PLE Template',
+          description: 'Standard PLE report card template',
+          examLevel: ExamLevel.PLE,
+          htmlTemplate: DEFAULT_PLE_TEMPLATE,
           isDefault: true,
+          isActive: true,
         },
-      });
+        /**{
+          name: 'Default UCE Template',
+          description: 'Standard UCE report card template',
+          examLevel: ExamLevel.UCE,
+          htmlTemplate: DEFAULT_UCE_TEMPLATE,
+          isDefault: true,
+          isActive: true,
+        },
+       {
+          name: 'Default UACE Template',
+          description: 'Standard UACE report card template',
+          examLevel: ExamLevel.UACE,
+          htmlTemplate: DEFAULT_UACE_TEMPLATE,
+          isDefault: true,
+          isActive: true,
+        },*/
+      ];
 
-      if (!existingTemplate) {
-        const template = this.templateRepository.create(templateData);
-        await this.templateRepository.save(template);
+      for (const templateData of templates) {
+        const existing = await this.templateRepository.findOne({
+          where: {
+            name: templateData.name,
+            examLevel: templateData.examLevel,
+          },
+        });
+
+        if (!existing) {
+          const template = this.templateRepository.create(templateData);
+          await this.templateRepository.save(template);
+          this.logger.log(`Created default template: ${templateData.name}`);
+        }
       }
+
+      this.logger.log('Default templates seeded successfully');
+    } catch (error) {
+      this.logger.error('Failed to seed default templates:', error);
+      throw error;
     }
   }
 }

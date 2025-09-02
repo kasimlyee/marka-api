@@ -1,53 +1,32 @@
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsBoolean,
-  IsObject,
-  MaxLength,
-} from 'class-validator';
-import {
-  ExamLevel,
-  TemplateStatus,
-} from '../entities/report-card-template.entity';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ExamLevel } from '../../assessments/assessment.entity';
 
-export class CreateReportCardTemplateDto {
+export class CreateTemplateDto {
+  @ApiProperty({ description: 'Template name' })
   @IsString()
-  @MaxLength(255)
+  @IsNotEmpty()
   name: string;
 
+  @ApiProperty({ description: 'Template description', required: false })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @IsString()
-  htmlTemplate: string;
-
-  @IsOptional()
-  @IsObject()
-  templateVariables?: Record<string, any>;
-
-  @IsOptional()
-  @IsObject()
-  styling?: Record<string, any>;
-
+  @ApiProperty({ enum: ExamLevel, description: 'Exam level' })
   @IsEnum(ExamLevel)
   examLevel: ExamLevel;
 
-  @IsOptional()
-  @IsEnum(TemplateStatus)
-  status?: TemplateStatus;
-
-  @IsOptional()
-  @IsBoolean()
-  isDefault?: boolean;
-
-  @IsOptional()
+  @ApiProperty({ description: 'HTML template content' })
   @IsString()
-  @MaxLength(100)
-  version?: string;
+  @IsNotEmpty()
+  htmlTemplate: string;
 
+  @ApiProperty({ description: 'CSS styles', required: false })
   @IsOptional()
-  @IsObject()
-  metadata?: Record<string, any>;
+  styles?: any;
+
+  @ApiProperty({ description: 'Template configuration', required: false })
+  @IsOptional()
+  configuration?: any;
 }

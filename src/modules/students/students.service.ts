@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Student } from './student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -57,6 +57,13 @@ export class StudentsService {
       throw new NotFoundException(`Student with ID ${id} not found`);
     }
     return student;
+  }
+
+  async findByIds(ids: string[], tenantId: string): Promise<Student[]> {
+    return this.studentRepository.find({
+      where: { id: In(ids), tenantId },
+      relations: ['school'],
+    });
   }
 
   async findByLIN(lin: string, tenantId: string): Promise<Student> {

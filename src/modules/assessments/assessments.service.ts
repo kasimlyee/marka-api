@@ -80,6 +80,21 @@ export class AssessmentsService {
     return assessment;
   }
 
+  async findByStudentAndLevel(
+    studentId: string,
+    examLevel: ExamLevel,
+  ): Promise<Assessment[]> {
+    const assessments = await this.assessmentRepository.find({
+      where: { studentId, examLevel },
+    });
+    if (!assessments) {
+      throw new NotFoundException(
+        `Assessment with student ID ${studentId} and exam level ${examLevel} not found`,
+      );
+    }
+    return assessments;
+  }
+
   async update(
     id: string,
     updateAssessmentDto: UpdateAssessmentDto,

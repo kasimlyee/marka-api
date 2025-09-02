@@ -1,22 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+} from 'typeorm';
 import { School } from '../../schools/school.entity';
-import { ReportCard } from './report-card.entity';
+import { User } from '../../users/user.entity';
+import { ExamLevel } from '../../assessments/assessment.entity';
 
 export enum TemplateStatus {
   DRAFT = 'draft',
   ACTIVE = 'active',
-  ARCHIVED = 'archived'
-}
-
-export enum ExamLevel {
-  PLE = 'ple',
-  UCE = 'uce',
-  UACE = 'uace'
+  ARCHIVED = 'archived',
 }
 
 @Entity('report_card_templates')
-@Index(['schoolId', 'examLevel', 'status'])
-@Index(['isDefault', 'examLevel'])
 export class ReportCardTemplate {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,38 +28,32 @@ export class ReportCardTemplate {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ type: 'text' })
-  htmlTemplate: string; // HTML template with placeholders
-
-  @Column({ type: 'jsonb', nullable: true })
-  templateVariables: Record<string, any>; // Available variables for the template
-
-  @Column({ type: 'jsonb', nullable: true })
-  styling: Record<string, any>; // CSS styles, colors, fonts, etc.
-
-  @Column({ type: 'enum', enum: ExamLevel })
+  @Column({
+    type: 'enum',
+    enum: ExamLevel,
+  })
   examLevel: ExamLevel;
 
-  @Column({ type: 'enum', enum: TemplateStatus, default: TemplateStatus.DRAFT })
-  status: TemplateStatus;
+  @Column({ type: 'text' })
+  htmlTemplate: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  styles: any; // CSS styles
+
+  @Column({ type: 'jsonb', nullable: true })
+  configuration: any; // Template configuration
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
   @Column({ type: 'boolean', default: false })
   isDefault: boolean;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  version: string;
+  @Column({ type: 'uuid', nullable: true })
+  schoolId: string; // null for system templates
 
-  @Column({ type: 'jsonb', nullable: true })
-  metadata: Record<string, any>;
-
-  @Column({ type: 'uuid' })
-  schoolId: string;
-
-  @ManyToOne(() => School, { onDelete: 'CASCADE' })
-  school: School;
-
-  @OneToMany(() => ReportCard, reportCard => reportCard.template)
-  reportCards: ReportCard[];
+  @Column({ type: 'uuid', nullable: true })
+  createdBy: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -66,9 +61,11 @@ export class ReportCardTemplate {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ type: 'uuid', nullable: true })
-  createdBy: string;
+  @ManyToOne(() => School)
+  @JoinColumn({ name: 'schoolId' })
+  school: School;
 
-  @Column({ type: 'uuid', nullable: true })
-  updatedBy: string;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdBy' })
+  creator: User;
 }

@@ -1,45 +1,25 @@
-import { IsString, IsEnum, IsOptional, IsArray, IsUUID } from 'class-validator';
-import { ExamLevel } from '../entities/report-card-template.entity';
+import { IsEnum, IsInt, IsUUID } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { ExamLevel } from '../../assessments/assessment.entity';
 
 export class GenerateReportCardDto {
-  @IsUUID()
-  studentId: string;
-
-  @IsUUID()
-  templateId: string;
-
-  @IsEnum(ExamLevel)
-  examLevel: ExamLevel;
-
-  @IsString()
-  academicYear: string;
-
-  @IsString()
-  term: string;
-
-  @IsOptional()
-  @IsString()
-  title?: string;
-}
-
-export class BulkGenerateReportCardDto {
-  @IsArray()
+  @ApiProperty({ description: 'Student IDs' })
   @IsUUID(undefined, { each: true })
   studentIds: string[];
 
-  @IsUUID()
-  templateId: string;
-
+  @ApiProperty({ enum: ExamLevel, description: 'Exam level' })
   @IsEnum(ExamLevel)
   examLevel: ExamLevel;
 
-  @IsString()
-  academicYear: string;
+  @ApiProperty({ description: 'Term number' })
+  @IsInt()
+  term: number;
 
-  @IsString()
-  term: string;
+  @ApiProperty({ description: 'Academic year' })
+  @IsInt()
+  year: number;
 
-  @IsOptional()
-  @IsString()
-  title?: string;
+  @ApiProperty({ description: 'Template ID' })
+  @IsUUID()
+  templateId: string;
 }
