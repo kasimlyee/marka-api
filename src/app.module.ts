@@ -30,6 +30,7 @@ import { AppService } from './app.service';
 import { StoreModule } from './modules/store/store.module';
 import { EmailModule } from './common/services/email/email.module';
 import { SmsModule } from './common/services/sms/sms.module';
+import { VerificationModule } from './modules/verification/verification.module';
 import emailConfig from './config/email.config';
 import smsConfig from './config/sms.config';
 
@@ -99,7 +100,7 @@ import smsConfig from './config/sms.config';
         password: configService.get('SMS_PASSWORD') ?? '',
         defaultSenderId: configService.get('SMS_DEFAULT_SENDER_ID') ?? '',
         defaultPriority: configService.get('SMS_DEFAULT_PRIORITY', 2),
-        isSandbox: configService.get('SMS_SANDBOX_MODE', false),
+        isSandbox: configService.get('SMS_SANDBOX_MODE', true),
         timeout: configService.get('SMS_TIMEOUT', 10000),
         maxRetries: configService.get('SMS_MAX_RETRIES', 3),
         retryDelay: configService.get('SMS_RETRY_DELAY', 1000),
@@ -126,6 +127,7 @@ import smsConfig from './config/sms.config';
     StoreModule,
     //services
     EmailModule,
+    VerificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

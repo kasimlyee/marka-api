@@ -4,7 +4,7 @@ import { SmsService } from './sms.service';
 import { SmsModuleOptions } from './interfaces/sms-config.interface';
 import { SMS_CONFIG_OPTIONS } from './sms.constants';
 
-
+@Global()
 @Module({})
 export class SmsModule {
   static forRoot(options: SmsModuleOptions): DynamicModule {

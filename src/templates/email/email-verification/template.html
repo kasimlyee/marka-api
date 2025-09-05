@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Activate Your Account</title>
+        <title>Verify Your Email</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -31,7 +31,7 @@
                 color: #667eea;
                 margin-bottom: 10px;
             }
-            .activation-box {
+            .verification-box {
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 color: white;
                 padding: 30px;
@@ -39,14 +39,16 @@
                 border-radius: 10px;
                 margin: 20px 0;
             }
-            .activation-button {
+            .verification-code {
                 display: inline-block;
                 padding: 15px 30px;
                 background-color: white;
                 color: #667eea;
                 text-decoration: none;
-                border-radius: 25px;
+                border-radius: 10px;
                 font-weight: bold;
+                font-size: 24px;
+                letter-spacing: 5px;
                 margin: 20px 0;
             }
             .warning {
@@ -74,39 +76,35 @@
                 <p>UNEB Report Card System</p>
             </div>
 
-            <h2>Account Activation Required</h2>
+            <h2>Email Verification Required</h2>
 
             <p>Hello {{firstName}},</p>
 
             <p>
                 Welcome to Marka! To complete your registration and access your
-                account, please activate your account by clicking the button
-                below.
+                account, please verify your email address using the code below.
             </p>
 
-            <div class="activation-box">
-                <h3>🔐 Activate Your Account</h3>
+            <div class="verification-box">
+                <h3>📧 Verify Your Email Address</h3>
                 <p>
-                    Click the button below to verify your email address and
-                    activate your Marka account.
+                    Use the following verification code to confirm your email
+                    address:
                 </p>
-                <a href="{{activationUrl}}" class="activation-button"
-                    >Activate Account</a
-                >
+                <div class="verification-code">{{verificationCode}}</div>
+                <p>Enter this code in your Marka application to continue.</p>
             </div>
 
             <div class="warning">
-                <strong>⏰ Important:</strong> This activation link will expire
-                in {{expiresIn}} hours for security reasons. Please activate
-                your account as soon as possible.
+                <strong>⏰ Important:</strong> This verification code will
+                expire in {{expiresIn}} minutes for security reasons. Please use
+                it as soon as possible.
             </div>
 
             <p>
-                <strong>Having trouble clicking the button?</strong> Copy and
-                paste the following link into your browser:
-            </p>
-            <p style="word-break: break-all; color: #666; font-size: 14px">
-                {{activationUrl}}
+                <strong>Didn't request this code?</strong> If you didn't request
+                this verification, please ignore this email or contact our
+                support team.
             </p>
 
             <div class="footer">
@@ -122,4 +120,3 @@
         </div>
     </body>
 </html>
-

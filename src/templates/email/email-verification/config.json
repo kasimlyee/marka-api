@@ -1,0 +1,7 @@
+{
+  "name": "Email Verification",
+  "subject": "Verify Your Email - {{firstName}}",
+  "variables": ["firstName", "verificationCode", "expiresIn", "supportEmail"],
+  "category": "verification",
+  "active": true
+}
