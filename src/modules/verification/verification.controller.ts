@@ -20,6 +20,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @ApiTags('verification')
 @ApiBearerAuth()
@@ -77,8 +78,8 @@ export class VerificationController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Resend verification code' })
   @ApiResponse({ status: 200, description: 'Code resent successfully' })
-  async resendCode(@Body() body: { token: string }) {
-    return this.verificationService.resendCode(body.token);
+  async resendCode(@CurrentUser() user: User, @Body() body: { token: string }) {
+    return this.verificationService.resendCode(body.token, user.id);
   }
 
   @Get('status/:token')

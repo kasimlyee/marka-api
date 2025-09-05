@@ -8,10 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
-import {
-  VerificationType,
-  VerificationStatus,
-} from '../enums/verification.enum';
+import { VerificationType, VerificationStatus } from './verification.enum';
 
 @Entity('verifications')
 export class Verification {
