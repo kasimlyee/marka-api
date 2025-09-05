@@ -9,13 +9,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User } from './../users/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { VerificationModule } from '../verification/verification.module';
+import { Tenant } from '../tenants/tenant.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Tenant]),
     UsersModule,
     TenantsModule,
     PassportModule,
+    VerificationModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

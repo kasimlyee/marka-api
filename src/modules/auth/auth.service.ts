@@ -2,6 +2,8 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
+  BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -22,12 +24,19 @@ import { plainToInstance } from 'class-transformer';
 import { UserResponseDto } from '../users/dto/user-response.dto';
 import { TenantResponseDto } from '../tenants/dto/tenant-response.dto';
 import { UserStatus } from '../users/enums/user-status.enum';
+import { VerificationService } from '../verification/verification.service';
+import {
+  VerificationType,
+  VerificationChannel,
+} from '../verification/verification.enum';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly verificationService: VerificationService,
     //private readonly tenantService: TenantService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -65,11 +74,17 @@ export class AuthService {
     if (tenantId && user.tenantId !== tenantId) {
       throw new UnauthorizedException('User does not belong to this tenant');
     }
-    // Check if user is active
-    if (!user.isActive()) {
+
+    // Check if user email and phone are verified
+    if (!user.isEmailVerified || !user.isPhoneVerified) {
       throw new ConflictException(
         'Please verify your email and phone before logging in',
       );
+    }
+
+    // Check if user is active
+    if (!user.isActive()) {
+      throw new UnauthorizedException('Account is deactivated');
     }
 
     // Update last login
@@ -138,10 +153,26 @@ export class AuthService {
           password: hashedPassword,
           role: Role.ADMIN,
           tenantId: tenant.id,
+          isEmailVerified: false, // Ensure email is not verified initially
+          isPhoneVerified: false, // Ensure phone is not verified initially
+          status: UserStatus.PENDING,
         }),
       );
 
       await queryRunner.commitTransaction();
+
+      // Initiate email and phone verification
+      await this.initiateEmailVerification(user.id);
+      if (user.phone) {
+        await this.initiatePhoneVerification(user.id);
+      }
+
+      await this.verificationService.initiateVerification(
+        user.id,
+        VerificationType.EMAIL,
+        user.email,
+        VerificationChannel.EMAIL,
+      );
 
       const userResponse = plainToInstance(UserResponseDto, user, {
         excludeExtraneousValues: true,
@@ -221,26 +252,190 @@ export class AuthService {
     await this.usersService.update(userId, { refreshTokenHash: undefined });
   }
 
+  async initiateEmailVerification(
+    userId: string,
+  ): Promise<{ message: string }> {
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (user.isEmailVerified) {
+      throw new BadRequestException('Email is already verified');
+    }
+
+    // Initiate email verification
+    const result = await this.verificationService.initiateVerification(
+      userId,
+      VerificationType.EMAIL,
+      user.email,
+      VerificationChannel.EMAIL,
+    );
+    this.logger.log(
+      `Verification code sent for  ${user.email} and will expire at ${result.expiresAt}`,
+    );
+    return { message: 'Verification code sent to your email' };
+  }
+
+  async verifyEmail(
+    userId: string,
+    token: string,
+    code: string,
+  ): Promise<{ success: boolean; message: string }> {
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (user.isEmailVerified) {
+      throw new BadRequestException('Email is already verified');
+    }
+
+    // Verify the code
+    const result = await this.verificationService.verifyCode(
+      token,
+      code,
+      VerificationType.EMAIL,
+    );
+
+    if (result.success) {
+      // Mark email as verified
+      await this.markEmailAsVerified(user.email);
+      return { success: true, message: 'Email verified successfully' };
+    }
+
+    return result;
+  }
+
+  async initiatePhoneVerification(
+    userId: string,
+  ): Promise<{ message: string }> {
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (!user.phone) {
+      throw new BadRequestException('Phone number not set');
+    }
+
+    if (user.isPhoneVerified) {
+      throw new BadRequestException('Phone is already verified');
+    }
+
+    // Initiate phone verification
+    const result = await this.verificationService.initiateVerification(
+      userId,
+      VerificationType.PHONE,
+      user.phone,
+      VerificationChannel.SMS,
+    );
+    this.logger.log(
+      `Verification code sent for  ${user.phone} and will expire at ${result.expiresAt}`,
+    );
+    return { message: 'Verification code sent to your phone' };
+  }
+
+  async verifyPhone(
+    userId: string,
+    token: string,
+    code: string,
+  ): Promise<{ success: boolean; message: string }> {
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (user.isPhoneVerified) {
+      throw new BadRequestException('Phone is already verified');
+    }
+
+    // Verify the code
+    const result = await this.verificationService.verifyCode(
+      token,
+      code,
+      VerificationType.PHONE,
+    );
+
+    if (result.success) {
+      // Mark phone as verified
+      await this.markPhoneAsVerified(user.phone);
+      return { success: true, message: 'Phone verified successfully' };
+    }
+
+    return result;
+  }
+
+  async resendVerificationCode(
+    userId: string,
+    type: VerificationType,
+    token: string,
+  ): Promise<{ message: string }> {
+    const user = await this.usersService.findOne(userId);
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    // Check if already verified
+    if (type === VerificationType.EMAIL && user.isEmailVerified) {
+      throw new BadRequestException('Email is already verified');
+    }
+
+    if (type === VerificationType.PHONE && user.isPhoneVerified) {
+      throw new BadRequestException('Phone is already verified');
+    }
+
+    // Resend the code
+    const result = await this.verificationService.resendCode(token, userId);
+    return result;
+  }
+
   async markEmailAsVerified(email: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const updateData: Partial<User> = {
+      isEmailVerified: true,
+      emailVerifiedAt: new Date(),
+    };
+
+    // If both email and phone are verified, activate the account
+    if (user.isPhoneVerified) {
+      updateData.status = UserStatus.ACTIVE;
+    }
+
     await this.userRepository.update(
       { email: email.toLowerCase() },
-      {
-        isEmailVerified: true,
-        emailVerifiedAt: new Date(),
-        status: UserStatus.ACTIVE,
-      },
+      updateData,
     );
   }
 
   async markPhoneAsVerified(phone: string): Promise<void> {
-    await this.userRepository.update(
-      { phone },
-      {
-        isPhoneVerified: true,
-        phoneVerifiedAt: new Date(),
-        status: UserStatus.ACTIVE,
-      },
-    );
+    const user = await this.userRepository.findOne({ where: { phone } });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const updateData: Partial<User> = {
+      isPhoneVerified: true,
+      phoneVerifiedAt: new Date(),
+    };
+
+    // If both email and phone are verified, activate the account
+    if (user.isEmailVerified) {
+      updateData.status = UserStatus.ACTIVE;
+    }
+
+    await this.userRepository.update({ phone }, updateData);
   }
 
   async initiateTwoFactor(

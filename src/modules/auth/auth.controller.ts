@@ -5,8 +5,6 @@ import {
   UseGuards,
   Request,
   Get,
-  Headers,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -22,6 +20,11 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Tenant } from '@marka/common';
 import { Tenant as TenantEntity } from '../tenants/tenant.entity';
 import { User } from '../users/user.entity';
+import {
+  VerifyPhoneDto,
+  VerifyEmailDto,
+  ResendVerificationDto,
+} from './dto/verify.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -65,5 +68,40 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
   getProfile(@Request() req): User {
     return req.user;
+  }
+
+  @Post('verify/phone')
+  @ApiOperation({ summary: 'Verify phone with code' })
+  @ApiResponse({ status: 200, description: 'Phone verified successfully' })
+  async verifyPhone(@Body() verifyPhoneDto: VerifyPhoneDto) {
+    return this.authService.verifyPhone(
+      verifyPhoneDto.userId,
+      verifyPhoneDto.token,
+      verifyPhoneDto.code,
+    );
+  }
+
+  @Post('verify/resend')
+  @ApiOperation({ summary: 'Resend verification code' })
+  @ApiResponse({ status: 200, description: 'Verification code resent' })
+  async resendVerificationCode(
+    @Body() resendVerificationDto: ResendVerificationDto,
+  ) {
+    return this.authService.resendVerificationCode(
+      resendVerificationDto.userId,
+      resendVerificationDto.type,
+      resendVerificationDto.token,
+    );
+  }
+
+  @Post('verify/email')
+  @ApiOperation({ summary: 'Verify email with code' })
+  @ApiResponse({ status: 200, description: 'Email verified successfully' })
+  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
+    return this.authService.verifyEmail(
+      verifyEmailDto.userId,
+      verifyEmailDto.token,
+      verifyEmailDto.code,
+    );
   }
 }
